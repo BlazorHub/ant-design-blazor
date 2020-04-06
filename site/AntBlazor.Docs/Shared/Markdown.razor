@@ -1,0 +1,42 @@
+﻿@using System.Net
+@using Markdig
+@inherits ComponentBase
+@inject HtmlRenderService HtmlRenderService
+@inject HttpClient HttpClient
+
+@((MarkupString)html)
+
+@code {
+
+    [Parameter] public string docUrl { get; set; }
+
+    [Parameter] public string markdown { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    string html = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(docUrl))
+        {
+            markdown = await this.HttpClient.GetStringAsync(docUrl);
+        }
+
+        if (ChildContent != null)
+        {
+            markdown = await HtmlRenderService.RenderAsync(ChildContent);
+            markdown = WebUtility.HtmlDecode(markdown);
+        }
+
+        if (!string.IsNullOrEmpty(markdown))
+        {
+            markdown = markdown.Trim(' ', '\r', '\n');
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            html = Markdig.Markdown.ToHtml(markdown, pipeline);
+        }
+        await base.OnParametersSetAsync();
+    }
+
+}
