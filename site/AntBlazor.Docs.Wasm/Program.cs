@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net.Http;
+using System.Reflection;
+using System.Threading.Tasks;
 using Autofac;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,10 +22,19 @@ namespace AntBlazor.Docs.Wasm
             builder.ConfigureContainer(new AbpAutofacServiceProviderFactory(containerBuilder));
             builder.Services.AddObjectAccessor(containerBuilder);
 
-            builder.Services.AddBaseAddressHttpClient();
-
+            builder.Services.AddSingleton(new HttpClient
+            { 
+                BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+            });
+            var configurationBuilder = new ConfigurationBuilder();
+            
+            //var stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("appsetting.json");
+            //configurationBuilder.AddJsonStream(stream);
+            
+            //builder.Configuration.AddJsonStream(stream);
             //Need to register IConfiguration manually
-            builder.Services.AddSingleton(typeof(IConfiguration), new ConfigurationBuilder().Build());
+            builder.Services.AddSingleton(typeof(IConfiguration), configurationBuilder.Build());
+         
             builder.Services.AddApplication<AntBlazorDocsWasmModule>();
  
             await builder.Build().RunAsync();
