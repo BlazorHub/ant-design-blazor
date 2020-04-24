@@ -22,19 +22,17 @@ namespace AntBlazor.Docs.Wasm
             builder.ConfigureContainer(new AbpAutofacServiceProviderFactory(containerBuilder));
             builder.Services.AddObjectAccessor(containerBuilder);
 
-            builder.Services.AddSingleton(new HttpClient
-            { 
-                BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
-            });
+            builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
             var configurationBuilder = new ConfigurationBuilder();
-            
+
             //var stream = Assembly.GetAssembly(typeof(Program)).GetManifestResourceStream("appsetting.json");
             //configurationBuilder.AddJsonStream(stream);
-            
+
             //builder.Configuration.AddJsonStream(stream);
             //Need to register IConfiguration manually
-            builder.Services.AddSingleton(typeof(IConfiguration), configurationBuilder.Build());
-         
+            //builder.Services.AddSingleton(typeof(IConfiguration), builder.Configuration);
+
             builder.Services.AddApplication<AntBlazorDocsWasmModule>();
  
             await builder.Build().RunAsync();

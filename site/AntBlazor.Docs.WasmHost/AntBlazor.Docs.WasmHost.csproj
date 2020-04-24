@@ -16,4 +16,8 @@
     <ProjectReference Include="..\AntBlazor.Docs.Wasm\AntBlazor.Docs.Wasm.csproj" />
     <ProjectReference Include="..\AntBlazor.Docs\AntBlazor.Docs.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
 </Project>
