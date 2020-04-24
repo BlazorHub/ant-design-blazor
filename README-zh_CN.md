@@ -22,13 +22,13 @@
 
 ## ✨ 特性
 
-- 提炼自企业级中后台产品的交互语言和视觉风格。
-- 开箱即用的高质量 Razor 组件，可在多种托管方式共享。
-- 支持基于 WebAssembly 的客户端和基于 SignalR 的服务端UI事件交互。
-- 支持渐进式 Web 应用（PWA）
-- 使用 C# 构建，多范式静态语言带来高效的开发体验。
-- 基于 .NET Standard 2.1，可直接引用丰富的 .NET 类库。
-- 可与已有的 ASP.NET Core MVC、Razor Pages 项目无缝集成。
+- 🌈 提炼自企业级中后台产品的交互语言和视觉风格。
+- 📦 开箱即用的高质量 Blazor 组件，可在多种托管方式共享。
+- 💕 支持基于 WebAssembly 的客户端和基于 SignalR 的服务端UI事件交互。
+- 🎨 支持渐进式 Web 应用（PWA）
+- 🛡 使用 C# 构建，多范式静态语言带来高效的开发体验。
+- ⚙️ 基于 .NET Standard 2.1，可直接引用丰富的 .NET 类库。
+- 🎁 可与已有的 ASP.NET Core MVC、Razor Pages 项目无缝集成。
 
 ## 🌈 在线示例
 
@@ -40,7 +40,7 @@ WebAssembly 静态托管页面示例
 ## 🖥 支持环境
 
 - .NET Core 3.1。
-- Blazor WebAssembly 3.2 preview 3。
+- Blazor WebAssembly 3.2 preview 5。
 - 支持服务端双向绑定。
 - 支持 WebAssembly 静态文件部署。
 - 主流4款现代浏览器，以及 Internet Explorer 11+（限 [Blazor Server](https://docs.microsoft.com/en-us/aspnet/core/blazor/supported-platforms?view=aspnetcore-3.1)）。
@@ -67,7 +67,7 @@ WebAssembly 静态托管页面示例
 - 安装 Blazor WebAssembly 模板
 
   ``` bash
-  $ dotnet new -i Microsoft.AspNetCore.Components.WebAssembly.Templates::3.2.0-preview3.20168.3
+  $ dotnet new -i Microsoft.AspNetCore.Components.WebAssembly.Templates::3.2.0-preview4.20210.8
   ```
 
 - 创建 Blazor WebAssembly 项目
@@ -108,7 +108,7 @@ WebAssembly 静态托管页面示例
   <AntButton type="primary">Hello World!</AntButton>
   ```
 
-## 🔨 本地开发
+## ⌨️ 本地开发
 
 - 先安装 [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1) 3.1.201 以上版本
 - 安装 Node.js（只用于样式文件和互操作所需 TS 文件的构建）
@@ -139,6 +139,13 @@ WebAssembly 静态托管页面示例
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/ElderJames/ant-design-blazor/pulls)
 
 如果你希望参与贡献，欢迎 [Pull Request](https://github.com/ElderJames/ant-design-blazor/pulls)，或给我们 [报告 Bug](https://github.com/ElderJames/ant-design-blazor/issues/new) 。
+
+### 贡献者
+
+感谢所有为本项目做出过贡献的朋友。
+
+<a href="https://github.com/ElderJames/ant-design-blazor/graphs/contributors"><img src="https://opencollective.com/ant-design-blazor/contributors.svg?width=890&button=false"/></a>
+
 
 ## 💕 支持本项目
 

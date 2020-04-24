@@ -22,13 +22,13 @@ English | [简体中文](README-zh_CN.md)
 
 ## ✨ Features
 
-- Enterprise-class UI interactive language and visual style.
-- Out-of-the-box, high-quality Razor components that can be shared in a variety of hosting models.
-- Supports WebAssembly-based client-side and SignalR-based server-side UI event interaction.
-- Supports Progressive Web Applications (PWA).
-- Build with C#, a multi-paradigm static language for an efficient development experience.
-- NET Standard 2.1 based, with direct reference to the rich .NET ecosystem.
-- Seamless integration with existing ASP.NET Core MVC and Razor Pages projects.
+- 🌈 Enterprise-class UI designed for web applications.
+- 📦 A set of high-quality Blazor components out of the box.
+- 💕 Supports WebAssembly-based client-side and SignalR-based server-side UI event interaction.
+- 🎨 Supports Progressive Web Applications (PWA).
+- 🛡 Build with C#, a multi-paradigm static language for an efficient development experience.
+- ⚙️ .NET Standard 2.1 based, with direct reference to the rich .NET ecosystem.
+- 🎁 Seamless integration with existing ASP.NET Core MVC and Razor Pages projects.
 
 ## 🌈 Online Examples
 
@@ -40,7 +40,7 @@ WebAssembly static hosting examples:
 ## 🖥 Environment Support
 
 - .NET Core 3.1
-- Blazor WebAssembly 3.2 Preview 3
+- Blazor WebAssembly 3.2 Preview 5
 - Supports two-way binding on the server side
 - Supports WebAssembly static file deployment
 - Support 4 major browsers engines, and Internet Explorer 11+ ([Blazor Server](https://docs.microsoft.com/en-us/aspnet/core/blazor/supported-platforms?view=aspnetcore-3.1) only)
@@ -68,7 +68,7 @@ Regularly synchronize with Official Ant Design specifications, you can check the
 - Install Blazor WebAssembly Templates
 
   ```bash
-  $ dotnet new -i Microsoft.AspNetCore.Components.WebAssembly.Templates::3.2.0-preview3.20168.3
+  $ dotnet new -i Microsoft.AspNetCore.Components.WebAssembly.Templates::3.2.0-preview4.20210.8
   ```
 
 - Create Blazor WebAssembly Project
@@ -109,7 +109,7 @@ Regularly synchronize with Official Ant Design specifications, you can check the
   <AntButton type="primary">Hello World!</AntButton>
   ```
 
-## 🔨 Local Development
+## ⌨️ Local Development
 
 - Install [.NET Core SDK](https://dotnet.microsoft.com/download/dotnet-core/3.1) 3.1.201 or later.
 - Install Node.js (only for building style files and interoperable TypeScript files)
@@ -141,6 +141,12 @@ Check out this [issue](https://github.com/ElderJames/ant-design-blazor/issues/21
 
 If you would like to contribute, feel free to create a [Pull Request](https://github.com/ElderJames/ant-design-blazor/pulls), or give us [Bug Report](https://github.com/ElderJames/ant-design-blazor/issues/new).
 
+### Contributors
+
+This project exists thanks to all the people who contribute.
+
+<a href="https://github.com/ElderJames/ant-design-blazor/graphs/contributors"><img src="https://opencollective.com/ant-design-blazor/contributors.svg?width=890&button=false"/></a>
+
 ## 💕 Donation
 
 This project is an MIT-licensed open source project. In order to achieve better and sustainable development of the project, we expect to gain more backers. We will use the proceeds for community operations and promotion. You can support us in any of the following ways:
@@ -162,7 +168,6 @@ If you encounter any problems in the process, feel free to ask for help via foll
   <summary>Scan QR Code with DingTalk</summary>
   <img src="./docs/assets/dingtalk.jpg" width="300">
 </details>
-
 
 ## ☀️ License
 

@@ -10,6 +10,7 @@ Breadcrumb: Breadcrumb
 Menu: Menu
 Steps: Steps 
 DataEntry: Data Entry
+Checkbox: Checkbox
 Switch: Switch
 Input: Input
 InputNumber: InputNumber
@@ -18,6 +19,7 @@ DataDisplay: Data Display
 Avatar: Avatar
 Badge: Badge
 Card: Card
+Empty: Empty
 Tag: Tag
 Timeline: Timeline
 Feedback: Feedback
@@ -26,3 +28,4 @@ Drawer: Drawer
 Other: Other
 Divider: Divider
 BackTop: BackTop
+Tabs: Tabs
