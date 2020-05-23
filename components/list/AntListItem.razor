@@ -1,0 +1,60 @@
+﻿@namespace AntBlazor
+@inherits AntDomComponentBase
+
+@if (Grid == null)
+{
+    <li class="@ClassMapper.Class" style="@Style" Id="@Id">
+        @itemChildren(this)
+    </li>
+}
+else
+{
+    <AntCol Flex="1" Style="@ColStyle">
+        <div class="@ClassMapper.Class" style="@Style" Id="@Id">
+            @itemChildren(this)
+        </div>
+    </AntCol>
+
+}
+@code{
+    RenderFragment<AntListItem> itemChildren = content =>
+    @<Template>
+        @if (content.ItemLayout == AntDirectionVHIType.Vertical && content.Extra != null)
+        {
+            <div class="@content.PrefixName-item-main">
+                @content.ChildContent
+                @content.actionsContent(content)
+            </div>
+            <div class="@content.PrefixName-item-extra">@content.Extra</div>
+        }
+        else
+        {
+            @content.ChildContent
+            @content.actionsContent(content)
+            @content.Extra
+        }
+    </Template>;
+
+RenderFragment<AntListItem> actionsContent = content =>
+@<Template>
+    @if (content.Actions != null && content.Actions.Count > 0)
+    {
+        <ul class="@content.PrefixName-item-action" key="actions">
+            @for (int i = 0; i < content.Actions.Count; i++)
+            {
+                <li key="@content.PrefixName-item-action-@i">
+                    @content.Actions[i]
+                    @if (i != (content.Actions.Count - 1))
+                    {
+                        <em class="@content.PrefixName-item-action-split" />
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+      
+    }
+</Template>;
+}

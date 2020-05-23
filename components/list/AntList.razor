@@ -1,0 +1,66 @@
+﻿@namespace AntBlazor
+@inherits AntDomComponentBase
+@typeparam TItem
+
+<div class="@ClassMapper.Class" style="@Style" Id="@Id">
+
+    @if (Header != null)
+    {
+        <div class="@PrefixName-header">
+            @Header
+        </div>
+    }
+
+    @if (DataSource != null && DataSource.Any())
+    {
+        <Spin Spinning="Loading">
+            @childrenContent(this)
+        </Spin>
+    }
+    else
+    {
+        <div style="min-height:53px" />
+    }
+
+    @if (Footer != null)
+    {
+        <div class="@PrefixName-footer">
+            @Footer
+        </div>
+    }
+    @if (LoadMore != null)
+    {
+        @LoadMore
+    }
+</div>
+
+@code{
+
+
+    RenderFragment<AntList<TItem>> childrenContent = content =>
+    @<Template>
+        @if (content.Grid != null)
+        {
+            <AntRow Gutter="content.Grid.Gutter">
+                @foreach (var item in content.DataSource)
+                {
+                    <AntListItem>
+                        @content.Item(item)
+                    </AntListItem>
+                }
+            </AntRow>
+        }
+        else
+        {
+            <ul class="ant-list-items">
+                @foreach (var item in content.DataSource)
+                {
+                    <AntListItem>
+                        @content.Item(item)
+                    </AntListItem>
+                }
+            </ul>
+        }
+
+    </Template>;
+}

@@ -17,6 +17,11 @@ namespace Microsoft.Extensions.DependencyInjection
                         s => HtmlEncoder.Default.Encode(s)))
             );
 
+            services.TryAddScoped<IconService>();
+            services.TryAddScoped<InteropService>();
+            services.TryAddScoped<NotificationService>();
+            services.TryAddScoped<MessageService>();
+
             return services;
         }
     }

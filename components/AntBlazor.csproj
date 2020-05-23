@@ -6,8 +6,8 @@
     <IsPackable>true</IsPackable>
     <RazorLangVersion>3.0</RazorLangVersion>
     <Description>Ant Design components for Blazor and Razor Components</Description>
-    <PackageProjectUrl>https://github.com/elderjames/ant-design-blazor</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/elderjames/ant-design-blazor</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/ant-design-blazor/ant-design-blazor</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ant-design-blazor/ant-design-blazor</RepositoryUrl>
     <PackageTags>blazor,ant-design,antd,design,razor,components</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
@@ -33,9 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.2" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Include="Ardalis.SmartEnum" Version="1.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.4" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

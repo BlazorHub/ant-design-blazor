@@ -18,7 +18,7 @@
           {
             "title": "Button",
             "type": "menuItem",
-            "url": "button"
+            "url": "components/button"
           },
           {
             "title": "Icon",
@@ -44,7 +44,12 @@
           {
             "title": "Layout",
             "type": "menuItem",
-            "url": "layout"
+            "url": "components/layout"
+          },
+          {
+            "title": "Space",
+            "type": "menuItem",
+            "url": "components/space"
           }
         ]
       },
@@ -53,6 +58,11 @@
         "type": "itemGroup",
         "children": [
           {
+            "title": "Affix",
+            "type": "menuItem",
+            "url": "affix"
+          },
+          {
             "title": "Breadcrumb",
             "type": "menuItem",
             "url": "breadcrumb"
@@ -60,7 +70,17 @@
           {
             "title": "Menu",
             "type": "menuItem",
-            "url": "menu"
+            "url": "components/menu"
+          },
+          {
+            "title": "Pagination",
+            "type": "menuItem",
+            "url": "components/pagination"
+          },
+          {
+            "title": "Dropdown",
+            "type": "menuItem",
+            "url": "components/dropdown"
           },
           {
             "title": "Steps",
@@ -84,9 +104,19 @@
             "url": "switch"
           },
           {
+            "title": "DatePicker",
+            "type": "menuItem",
+            "url": "components/datePicker"
+          },
+          {
+            "title": "TimePicker",
+            "type": "menuItem",
+            "url": "components/timePicker"
+          },
+          {
             "title": "Input",
             "type": "menuItem",
-            "url": "input"
+            "url": "components/input"
           },
           {
             "title": "InputNumber",
@@ -97,6 +127,11 @@
             "title": "Radio",
             "type": "menuItem",
             "url": "radio"
+          },
+          {
+            "title": "Slider",
+            "type": "menuItem",
+            "url": "slider"
           }
         ]
       },
@@ -107,12 +142,17 @@
           {
             "title": "Avatar",
             "type": "menuItem",
-            "url": "avatar"
+            "url": "components/avatar"
           },
           {
             "title": "Badge",
             "type": "menuItem",
-            "url": "badge"
+            "url": "components/badge"
+          },
+          {
+            "title": "Carousel",
+            "type": "menuItem",
+            "url": "carousel"
           },
           {
             "title": "Card",
@@ -123,6 +163,16 @@
             "title": "Empty",
             "type": "menuItem",
             "url": "empty"
+          },
+          {
+            "title": "List",
+            "type": "menuItem",
+            "url": "components/list"
+          },
+          {
+            "title": "Tooltip",
+            "type": "menuItem",
+            "url": "components/tooltip"
           },
           {
             "title": "Tag",
@@ -148,12 +198,37 @@
           {
             "title": "Alert",
             "type": "menuItem",
-            "url": "alert"
+            "url": "components/alert"
           },
           {
             "title": "Drawer",
             "type": "menuItem",
-            "url": "drawer"
+            "url": "components/drawer"
+          },
+          {
+            "title": "Message",
+            "type": "menuItem",
+            "url": "components/message"
+          },
+          {
+            "title": "Notification",
+            "type": "menuItem",
+            "url": "notification"
+          },
+          {
+            "title": "Progress",
+            "type": "menuItem",
+            "url": "components/progress"
+          },
+          {
+            "title": "Result",
+            "type": "menuItem",
+            "url": "components/result"
+          },
+          {
+            "title": "Spin",
+            "type": "menuItem",
+            "url": "components/spin"
           }
         ]
       },
