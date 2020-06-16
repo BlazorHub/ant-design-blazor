@@ -12,8 +12,10 @@ Menu: Menu
 Steps: Steps 
 DataEntry: Data Entry
 Checkbox: Checkbox
+Cascader: Cascader
 Switch: Switch
 DatePicker: DatePicker
+Form: Form
 TimePicker: TimePicker
 Input: Input
 InputNumber: InputNumber
@@ -22,6 +24,7 @@ DataDisplay: Data Display
 Avatar: Avatar
 Badge: Badge
 Card: Card
+Calendar: Calendar
 Empty: Empty
 List: List
 Tooltip: Tooltip
@@ -44,3 +47,8 @@ Carousel: Carousel
 Message: Message
 Pagination: Pagination
 Progress: Progress
+Transfer: Transfer
+Modal: Modal
+Statistic: Statistic
+Rate: Rate
+Select: Select

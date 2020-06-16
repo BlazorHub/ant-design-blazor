@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using AntBlazor.Internal;
-using AntBlazor.JsInterop;
+using AntDesign.Internal;
+using AntDesign.JsInterop;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class Dropdown : OverlayTrigger
     {
@@ -15,7 +15,7 @@ namespace AntBlazor
 
         private string _rightButtonIcon = "ellipsis";
         private string _buttonSize = AntSizeLDSType.Default;
-        private string _buttonType = AntButtonType.Default;
+        private string _buttonType = ButtonType.Default;
 
         private RenderFragment _leftButton;
         private RenderFragment _rightButton;

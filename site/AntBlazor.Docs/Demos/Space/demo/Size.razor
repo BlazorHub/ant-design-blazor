@@ -1,22 +1,22 @@
-﻿<AntRadioGroup @bind-Value=@size OnChange="e=> setSize(e)">
-    <AntRadio Value="small">Small</AntRadio>
-    <AntRadio Value="middle">Middle</AntRadio>
-    <AntRadio Value="large">Large</AntRadio>
-</AntRadioGroup>
+﻿<RadioGroup @bind-Value=@size OnChange="e=> setSize(e)">
+    <Radio Value="small">Small</Radio>
+    <Radio Value="middle">Middle</Radio>
+    <Radio Value="large">Large</Radio>
+</RadioGroup>
 <br />
 <br />
 <Space Size=@size>
     <SpaceItem>
-        <AntButton Type="primary">Primary</AntButton>
+        <Button Type="primary">Primary</Button>
     </SpaceItem>
     <SpaceItem>
-        <AntButton>Default</AntButton>
+        <Button>Default</Button>
     </SpaceItem>
     <SpaceItem>
-        <AntButton Type="dashed">Dashed</AntButton>
+        <Button Type="dashed">Dashed</Button>
     </SpaceItem>
     <SpaceItem>
-        <AntButton Type="link">Link</AntButton>
+        <Button Type="link">Link</Button>
     </SpaceItem>
 </Space>
 

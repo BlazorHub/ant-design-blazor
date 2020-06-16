@@ -1,9 +1,9 @@
-﻿using AntBlazor.JsInterop;
+﻿using AntDesign.JsInterop;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class TextArea : Input
     {
@@ -90,7 +90,7 @@ namespace AntBlazor
             // do not call base method to avoid lost focus
             //base.OnInputAsync(args);
 
-            Value = args?.Value.ToString();
+            CurrentValueAsString = args.Value.ToString();
 
             if (AutoSize)
             {
@@ -122,7 +122,7 @@ namespace AntBlazor
 
         private async Task CalculateRowHeightAsync()
         {
-            Element element = await JsInvokeAsync<Element>(JSInteropConstants.getDomInfo, InputEl);
+            Element element = await JsInvokeAsync<Element>(JSInteropConstants.getDomInfo, Ref);
             element.ToString();
             _hiddenWidth = $"width: {element.offsetWidth}px;";
 

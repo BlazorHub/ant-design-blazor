@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace AntBlazor.Docs.Shared
+namespace AntDesign.Docs.Shared
 {
     public partial class MockBrowser
     {
@@ -10,7 +10,7 @@ namespace AntBlazor.Docs.Shared
         public int Height { get; set; }
 
         [Parameter]
-        public bool WithUrl { get; set; }
+        public string WithUrl { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -18,7 +18,7 @@ namespace AntBlazor.Docs.Shared
         protected override void OnInitialized()
         {
             ClassMapper.Add("browser-mockup")
-                .If("with-url", () => WithUrl);
+                .If("with-url", () => WithUrl != null);
         }
     }
 }

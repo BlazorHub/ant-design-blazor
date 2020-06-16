@@ -1,0 +1,27 @@
+@namespace AntDesign
+@inherits AntDomComponentBase
+@typeparam TData
+
+@if (IsHeader)
+{
+    <th class="ant-table-cell">
+        @(Title ?? DisplayName ?? FieldName)
+    </th>
+}
+else
+{
+    <td class="ant-table-cell">
+        @if (CellRender != null)
+        {
+            @CellRender(Field)
+        }
+        else if (ChildContent != null)
+        {
+            @ChildContent
+        }
+        else
+        {
+            @Field
+        }
+    </td>
+}

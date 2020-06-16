@@ -1,4 +1,4 @@
-﻿@namespace AntBlazor
+﻿@namespace AntDesign
 @inherits AntDomComponentBase
 
 <li class="@ClassMapper.Class" style="@Style" @ref="Ref" title="@_title" id="@Id" @onclick="ClickItem" @key="Key">
@@ -32,20 +32,20 @@
                     @switch (type)
                     {
                         case "prev":
-                            <AntIcon Type="left"></AntIcon>
+                            <Icon Type="left"></Icon>
                             break;
                         case "next":
-                            <AntIcon Type="right"></AntIcon>
+                            <Icon Type="right"></Icon>
                             break;
                         default:
                             <div class="ant-pagination-item-container">
                                 @if (type == "prev_5")
                                 {
-                                    <AntIcon Type="double-left" Class="ant-pagination-item-link-icon"></AntIcon>
+                                    <Icon Type="double-left" Class="ant-pagination-item-link-icon"></Icon>
                                 }
                                 else if (type == "next_5")
                                 {
-                                    <AntIcon Type="double-right" Class="ant-pagination-item-link-icon"></AntIcon>
+                                    <Icon Type="double-right" Class="ant-pagination-item-link-icon"></Icon>
                                 }
                                 <span class="ant-pagination-item-ellipsis">•••</span>
                             </div>

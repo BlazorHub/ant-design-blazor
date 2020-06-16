@@ -1,0 +1,34 @@
+﻿<div>
+    <Card Bordered Title=@("Default size card")>
+        <Extra>
+            <a>More</a>
+        </Extra>
+        <Body>
+            <p>Card content</p>
+            <p>Card content</p>
+            <p>Card content</p>
+        </Body>
+    </Card>
+
+    <Card Bordered Size="small" Title=@("Small size card")>
+        <Extra>
+            <a>More</a>
+        </Extra>
+        <Body>
+            <p>Card content</p>
+            <p>Card content</p>
+            <p>Card content</p>
+        </Body>
+    </Card>
+
+
+</div>
+@code
+{
+    private RenderFragment actionSetting =@<Template>  <Icon Type="setting" /></Template>;
+
+    private RenderFragment actionEdit =@<Template><Icon Type="edit" /></Template>;
+
+    private RenderFragment actionEllipsis =@<Template> <Icon Type="ellipsis" /></Template>;
+
+}

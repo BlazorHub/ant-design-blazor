@@ -3,7 +3,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class InputNumber : AntInputComponentBase<double>
     {
@@ -43,9 +43,6 @@ namespace AntBlazor
 
         [Parameter]
         public double Min { get; set; } = double.NegativeInfinity;
-
-        [Parameter]
-        public string Size { get; set; } = InputSize.Default;
 
         [Parameter]
         public bool Disabled { get; set; }
@@ -101,7 +98,7 @@ namespace AntBlazor
 
             if (num >= Min && num <= Max)
             {
-                Value = num;
+                CurrentValue = num;
             }
         }
 
@@ -120,7 +117,7 @@ namespace AntBlazor
             return cls;
         }
 
-        private string DisplayValue()
+        protected override string FormatValueAsString(double value)
         {
             if (Formatter != null)
             {

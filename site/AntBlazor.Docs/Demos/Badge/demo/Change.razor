@@ -1,22 +1,22 @@
 ﻿<div>
     <div>
-        <AntBadge Count="@count">
+        <Badge Count="@count">
             <a href="#" class="head-example" />
-        </AntBadge>
-        <AntButtonGroup>
-            <AntButton @onclick="_=>decline()">
-                <AntIcon Type="minus"></AntIcon>
-            </AntButton>
-            <AntButton @onclick="_=>increase()">
-                <AntIcon Type="plus"></AntIcon>
-            </AntButton>
-        </AntButtonGroup>
+        </Badge>
+        <ButtonGroup>
+            <Button @onclick="_=>decline()">
+                <Icon Type="minus"></Icon>
+            </Button>
+            <Button @onclick="_=>increase()">
+                <Icon Type="plus"></Icon>
+            </Button>
+        </ButtonGroup>
     </div>
     <div style="margin-top: 10px">
-        <AntBadge Dot="@show">
+        <Badge Dot="@show">
             <a href="#" class="head-example" />
-        </AntBadge>
-        <AntSwitch OnChange="onChange" Checked="@show" />
+        </Badge>
+        <Switch OnChange="onChange" Checked="@show" />
     </div>
 </div>
 

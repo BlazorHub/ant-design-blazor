@@ -1,13 +1,17 @@
 ﻿<div>
-    <Input Placeholder="Prefix and Suffix" DefaultValue="123">
+    <Input Placeholder="Prefix and Suffix" DefaultValue="123" @bind-Value="@txtValue" >
         <Prefix>
-            <AntIcon Type="user" />
+            <Icon Type="user" />
         </Prefix>
     </Input>
     <br />
     <br />
-    <Input Placeholder="default size">
-        <Prefix> ￥ </Prefix>
-        <Suffix>RMB </Suffix>
+    <Input Placeholder="default size" @bind-Value="@txtValue">
+    <Prefix> ￥ </Prefix>
+    <Suffix>RMB </Suffix>
     </Input>
 </div>
+
+@code {
+    private string txtValue { get; set; }
+}

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class InputGroup : AntDomComponentBase
     {
@@ -11,10 +11,10 @@ namespace AntBlazor
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
-        public string Size { get; set; }
+        public bool Compact { get; set; }
 
-        [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> Attributes { get; set; }
+        [Parameter]
+        public string Size { get; set; }
 
         protected override void OnInitialized()
         {
@@ -24,7 +24,7 @@ namespace AntBlazor
                 .Add(PrefixCls)
                 .If($"{PrefixCls}-lg", () => Size == InputSize.Large)
                 .If($"{PrefixCls}-sm", () => Size == InputSize.Small)
-                .If($"{PrefixCls}-compact", () => Attributes != null && Attributes.ContainsKey("compact"));
+                .If($"{PrefixCls}-compact", () => Compact);
         }
     }
 }

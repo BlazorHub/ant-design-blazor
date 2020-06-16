@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class InputPassword : Input
     {
@@ -36,7 +36,7 @@ namespace AntBlazor
                     int i = 0;
                     builder.OpenElement(i++, "span");
                     builder.AddAttribute(i++, "class", $"{PrefixCls}-suffix");
-                    builder.OpenComponent<AntIcon>(i++);
+                    builder.OpenComponent<Icon>(i++);
                     builder.AddAttribute(i++, "class", $"{PrefixCls}-password-icon");
                     builder.AddAttribute(i++, "type", _eyeIcon);
                     builder.AddAttribute(i++, "onclick", CallbackFactory.Create(this, ToggleVisibility));

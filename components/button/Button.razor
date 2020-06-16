@@ -1,0 +1,17 @@
+@namespace AntDesign
+@inherits AntDomComponentBase
+
+<CascadingValue Value="this">
+    <button class="@ClassMapper.Class" style="@Style" id="@Id" type="@HtmlType" @onclick="HandleOnClick" disabled="@Disabled">
+        @if (Loading)
+        {
+            <Icon Type="loading"></Icon>
+        }
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <Icon Type="@Icon" Style="@IconStyle"></Icon>
+        }
+
+        @ChildContent
+    </button>
+</CascadingValue>

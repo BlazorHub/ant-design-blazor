@@ -1,0 +1,71 @@
+@namespace AntDesign
+@inherits AntDomComponentBase
+@typeparam TItem
+
+<div class="ant-table-wrapper">
+    <Spin Spinning="Loading">
+        @if (ShowPagination && PaginationPosition.Contains("top"))
+        {
+            <Pagination Class="@PaginationClass"
+                        Total="Total"
+                        PageSize="PageSize"
+                        Current="PageIndex"
+                        OnPageIndexChange="HandlePageIndexChange"
+                        OnPageSizeChange="HandlePageSizeChange" />
+        }
+
+        <CascadingValue Value="@this" TValue="ITable">
+            <div class="ant-table">
+                <div class="ant-table-container">
+                    <div class="ant-table-content">
+                        <table style="table-layout: auto;">
+                            <colgroup></colgroup>
+                            <thead class="ant-table-thead">
+                                <tr>
+                                    <CascadingValue Name="IsHeader" Value="true">
+                                        @if (_fieldModel != null)
+                                        {
+                                            @ChildContent(_fieldModel)
+                                        }
+                                    </CascadingValue>
+                                </tr>
+                            </thead>
+                            <tbody class="ant-table-tbody">
+                                @if (ActualTotal <= 0)
+                                {
+                                    <tr class="ant-table-placeholder">
+                                        <td colspan="6" class="ant-table-cell">
+                                            <Empty Simple />
+                                        </td>
+                                    </tr>
+                                }
+                                else if (ShowItems != null && _columns.Count > 0)
+                                {
+                                    for (int i = 0; i < ShowItems.Count(); i++)
+                                    {
+                                        var data = ShowItems.ElementAt(i);
+                                        var @checked = HeaderSelection?.RowSelections.ElementAtOrDefault(i)?.Checked??false;
+                                        <CascadingValue Value="i" Name="Index">
+                                                <tr class="ant-table-row ant-table-row-level-0 @(@checked ? "ant-table-row-selected" : "")">
+                                                    @ChildContent(data)
+                                                </tr>
+                                        </CascadingValue>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </CascadingValue>
+        @if (ShowPagination && PaginationPosition.Contains("bottom"))
+        {
+            <Pagination Class="@PaginationClass"
+                        Total="Total"
+                        PageSize="PageSize"
+                        Current="PageIndex"
+                        OnPageIndexChange="HandlePageIndexChange"
+                        OnPageSizeChange="HandlePageSizeChange" />
+        }
+    </Spin>
+</div>

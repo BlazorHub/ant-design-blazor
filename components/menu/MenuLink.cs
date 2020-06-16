@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Routing;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public class MenuLink : AntDomComponentBase
     {
@@ -50,7 +50,7 @@ namespace AntBlazor
         public Menu Menu { get; set; }
 
         [CascadingParameter]
-        public AntButton Button { get; set; }
+        public Button Button { get; set; }
 
         [Inject] private NavigationManager NavigationManger { get; set; }
 

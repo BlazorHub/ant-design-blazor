@@ -23,12 +23,12 @@
           {
             "title": "Icon",
             "type": "menuItem",
-            "url": "icon"
+            "url": "components/icon"
           },
           {
             "title": "Typography",
             "type": "menuItem",
-            "url": "typography"
+            "url": "components/typography"
           }
         ]
       },
@@ -39,7 +39,7 @@
           {
             "title": "Grid",
             "type": "menuItem",
-            "url": "grid"
+            "url": "components/grid"
           },
           {
             "title": "Layout",
@@ -60,17 +60,22 @@
           {
             "title": "Affix",
             "type": "menuItem",
-            "url": "affix"
+            "url": "components/affix"
           },
           {
             "title": "Breadcrumb",
             "type": "menuItem",
-            "url": "breadcrumb"
+            "url": "components/breadcrumb"
           },
           {
             "title": "Menu",
             "type": "menuItem",
             "url": "components/menu"
+          },
+          {
+            "title": "PageHeader",
+            "type": "menuItem",
+            "url": "components/pageheader"
           },
           {
             "title": "Pagination",
@@ -85,7 +90,7 @@
           {
             "title": "Steps",
             "type": "menuItem",
-            "url": "step"
+            "url": "components/steps"
           }
         ]
       },
@@ -96,17 +101,27 @@
           {
             "title": "Checkbox",
             "type": "menuItem",
-            "url": "checkbox"
+            "url": "components/checkbox"
+          },
+          {
+            "title": "Cascader",
+            "type": "menuItem",
+            "url": "components/cascader"
           },
           {
             "title": "Switch",
             "type": "menuItem",
-            "url": "switch"
+            "url": "components/switch"
           },
           {
             "title": "DatePicker",
             "type": "menuItem",
             "url": "components/datePicker"
+          },
+          {
+            "title": "Form",
+            "type": "menuItem",
+            "url": "components/form"
           },
           {
             "title": "TimePicker",
@@ -121,17 +136,32 @@
           {
             "title": "InputNumber",
             "type": "menuItem",
-            "url": "inputnumber"
+            "url": "components/inputnumber"
+          },
+          {
+            "title": "Rate",
+            "type": "menuItem",
+            "url": "components/rate"
           },
           {
             "title": "Radio",
             "type": "menuItem",
-            "url": "radio"
+            "url": "components/radio"
           },
           {
             "title": "Slider",
             "type": "menuItem",
-            "url": "slider"
+            "url": "components/slider"
+          },
+          {
+            "title": "Select",
+            "type": "menuItem",
+            "url": "components/select"
+          },
+          {
+            "title": "Transfer",
+            "type": "menuItem",
+            "url": "components/transfer"
           }
         ]
       },
@@ -152,22 +182,37 @@
           {
             "title": "Carousel",
             "type": "menuItem",
-            "url": "carousel"
+            "url": "components/carousel"
           },
           {
             "title": "Card",
             "type": "menuItem",
-            "url": "card"
+            "url": "components/card"
+          },
+          {
+            "title": "Calendar",
+            "type": "menuItem",
+            "url": "components/calendar"
+          },
+          {
+            "title": "Descriptions",
+            "type": "menuItem",
+            "url": "components/descriptions"
           },
           {
             "title": "Empty",
             "type": "menuItem",
-            "url": "empty"
+            "url": "components/empty"
           },
           {
             "title": "List",
             "type": "menuItem",
             "url": "components/list"
+          },
+          {
+            "title": "Statistic",
+            "type": "menuItem",
+            "url": "components/statistic"
           },
           {
             "title": "Tooltip",
@@ -177,17 +222,22 @@
           {
             "title": "Tag",
             "type": "menuItem",
-            "url": "tag"
+            "url": "components/tag"
           },
           {
             "title": "Tabs",
             "type": "menuItem",
-            "url": "tabs"
+            "url": "components/tabs"
           },
           {
             "title": "Timeline",
             "type": "menuItem",
-            "url": "timeline"
+            "url": "components/timeline"
+          },
+          {
+            "title": "Table",
+            "type": "menuItem",
+            "url": "components/table"
           }
         ]
       },
@@ -206,6 +256,11 @@
             "url": "components/drawer"
           },
           {
+            "title": "Modal",
+            "type": "menuItem",
+            "url": "components/modal"
+          },
+          {
             "title": "Message",
             "type": "menuItem",
             "url": "components/message"
@@ -213,7 +268,7 @@
           {
             "title": "Notification",
             "type": "menuItem",
-            "url": "notification"
+            "url": "components/notification"
           },
           {
             "title": "Progress",
@@ -239,12 +294,12 @@
           {
             "title": "Divider",
             "type": "menuItem",
-            "url": "divider"
+            "url": "components/divider"
           },
           {
             "title": "BackTop",
             "type": "menuItem",
-            "url": "backtop"
+            "url": "components/backtop"
           }
         ]
       }

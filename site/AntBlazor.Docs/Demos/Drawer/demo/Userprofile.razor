@@ -9,124 +9,124 @@
                       
                         </AntListItemMeta>
 
-                        <AntButton Type="@AntButtonType.Link" OnClick="(e)=>open(e, item.Title)">View Profile</AntButton>
+                        <Button Type="@ButtonType.Link" OnClick="(e)=>open(e, item.Title)">View Profile</Button>
                     </Item>
         </AntList>
 
         <Drawer Width="640" Closable="true" Visible="visible" Title='("User Profile")' OnClose="_=>close()">
-            <AntText Strong="true">Personal</AntText>
-            <AntRow></AntRow>
-            <AntRow Gutter="12">
-                <AntCol Span="4">
-                    <AntText Strong="true">Full Name:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText>Henry</AntText>
-                </AntCol>
-                <AntCol Span="4">
-                    <AntText Strong="true">Account:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText>AntDesign@example.com</AntText>
-                </AntCol>
-            </AntRow>
-            <AntRow Gutter="12">
-                <AntCol Span="4">
-                    <AntText Strong="true">City:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText>HangZhou</AntText>
-                </AntCol>
-                <AntCol Span="4">
-                    <AntText Strong="true">Country:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText>China</AntText>
-                </AntCol>
-            </AntRow>
-            <AntRow Gutter="12">
-                <AntCol Span="4">
-                    <AntText Strong="true">Birthday:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText>February 2,1900</AntText>
-                </AntCol>
-                <AntCol Span="4">
-                    <AntText Strong="true">Website:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText>www.baidu.com</AntText>
-                </AntCol>
-            </AntRow>
+            <Text Strong="true">Personal</Text>
+            <Row></Row>
+            <Row Gutter="12">
+                <Col Span="4">
+                    <Text Strong="true">Full Name:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text>Henry</Text>
+                </Col>
+                <Col Span="4">
+                    <Text Strong="true">Account:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text>AntDesign@example.com</Text>
+                </Col>
+            </Row>
+            <Row Gutter="12">
+                <Col Span="4">
+                    <Text Strong="true">City:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text>HangZhou</Text>
+                </Col>
+                <Col Span="4">
+                    <Text Strong="true">Country:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text>China</Text>
+                </Col>
+            </Row>
+            <Row Gutter="12">
+                <Col Span="4">
+                    <Text Strong="true">Birthday:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text>February 2,1900</Text>
+                </Col>
+                <Col Span="4">
+                    <Text Strong="true">Website:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text>www.baidu.com</Text>
+                </Col>
+            </Row>
 
-            <AntDivider></AntDivider>
-            <AntText Strong="true">Company</AntText>
-            <AntRow></AntRow>
-            <AntRow>
-                <AntCol Span="4">
-                    <AntText Strong="true">Position:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText Strong="false">Programmer</AntText>
-                </AntCol>
-                <AntCol Span="6">
-                    <AntText Strong="true">Responsibilities:</AntText>
-                </AntCol>
-                <AntCol Span="6">
-                    <AntText Strong="false">Coding</AntText>
-                </AntCol>
-            </AntRow>
-            <AntRow>
-                <AntCol Span="4">
-                    <AntText Strong="true">Department:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText Strong="false">XTech</AntText>
-                </AntCol>
-                <AntCol Span="4">
-                    <AntText Strong="true">Supervisor:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText Strong="false">Lin</AntText>
-                </AntCol>
-            </AntRow>
-            <AntRow>
-                <AntCol Span="4">
-                    <AntText Strong="true">Skills:</AntText>
-                </AntCol>
-                <AntCol Span="20">
-                    <AntText Strong="false">
+            <Divider></Divider>
+            <Text Strong="true">Company</Text>
+            <Row></Row>
+            <Row>
+                <Col Span="4">
+                    <Text Strong="true">Position:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text Strong="false">Programmer</Text>
+                </Col>
+                <Col Span="6">
+                    <Text Strong="true">Responsibilities:</Text>
+                </Col>
+                <Col Span="6">
+                    <Text Strong="false">Coding</Text>
+                </Col>
+            </Row>
+            <Row>
+                <Col Span="4">
+                    <Text Strong="true">Department:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text Strong="false">XTech</Text>
+                </Col>
+                <Col Span="4">
+                    <Text Strong="true">Supervisor:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text Strong="false">Lin</Text>
+                </Col>
+            </Row>
+            <Row>
+                <Col Span="4">
+                    <Text Strong="true">Skills:</Text>
+                </Col>
+                <Col Span="20">
+                    <Text Strong="false">
                         C / C + +, data structures, software engineering, operating systems, computer networks, databases, compiler theory, computer architecture, Microcomputer Principle and Interface Technology, Computer English, Java, ASP, etc.
-                    </AntText>
-                </AntCol>
+                    </Text>
+                </Col>
 
-            </AntRow>
+            </Row>
 
-            <AntDivider ></AntDivider>
-            <AntText Strong="true">Contacts</AntText>
-            <AntRow></AntRow>
-            <AntRow>
-                <AntCol Span="4">
-                    <AntText Strong="true">Email:</AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText Strong="false"> ant-design-Blazor@example.com</AntText>
-                </AntCol>
-                <AntCol Span="4">
-                    <AntText Strong="true">    Phone Number:     </AntText>
-                </AntCol>
-                <AntCol Span="8">
-                    <AntText Strong="false">+86 181 0000 0000 </AntText>
-                </AntCol>
-            </AntRow>
-            <AntRow>
-                <AntCol Span="4">
-                    <AntText Strong="true">Github:</AntText>
-                </AntCol>
-                <AntCol Span="20">
-                    <AntText Strong="false">https://ant-design-blazor.gitee.io/ </AntText>
-                </AntCol>
-            </AntRow>
+            <Divider ></Divider>
+            <Text Strong="true">Contacts</Text>
+            <Row></Row>
+            <Row>
+                <Col Span="4">
+                    <Text Strong="true">Email:</Text>
+                </Col>
+                <Col Span="8">
+                    <Text Strong="false"> ant-design-Blazor@example.com</Text>
+                </Col>
+                <Col Span="4">
+                    <Text Strong="true">    Phone Number:     </Text>
+                </Col>
+                <Col Span="8">
+                    <Text Strong="false">+86 181 0000 0000 </Text>
+                </Col>
+            </Row>
+            <Row>
+                <Col Span="4">
+                    <Text Strong="true">Github:</Text>
+                </Col>
+                <Col Span="20">
+                    <Text Strong="false">https://ant-design-blazor.gitee.io/ </Text>
+                </Col>
+            </Row>
         </Drawer>   
 </div>
 

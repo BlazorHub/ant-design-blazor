@@ -1,0 +1,29 @@
+﻿@namespace AntDesign
+@inherits AntDomComponentBase
+@typeparam TModel
+@using Microsoft.AspNetCore.Components.Forms;
+@using AntDesign.Internal;
+
+<Spin Spinning="Loading">
+    <EditForm class="@ClassMapper.Class"
+              style="@Style"
+              id="@Id"
+              EditContext="_editContext"
+              OnValidSubmit="OnFinish"
+              OnInvalidSubmit="OnFinishFailed">
+        <DataAnnotationsValidator />
+        <CascadingValue Value="this" Name="Form" TValue="IForm">
+            @if (!string.IsNullOrEmpty(Size))
+            {
+                <CascadingValue Value="Size" Name="FormSize">
+                    @ChildContent(Model)
+                </CascadingValue>
+            }
+            else
+            {
+                @ChildContent(Model)
+            }
+
+        </CascadingValue>
+    </EditForm>
+</Spin>

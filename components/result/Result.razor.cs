@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 using OneOf;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class Result : AntDomComponentBase
     {
@@ -41,7 +41,7 @@ namespace AntBlazor
         {
             var iconType = DetermineIconType();
 
-            builder.OpenComponent<AntIcon>(1);
+            builder.OpenComponent<Icon>(1);
             builder.AddAttribute(2, "Type", iconType.type);
             builder.AddAttribute(2, "Theme", iconType.theme);
             builder.CloseComponent();

@@ -1,18 +1,16 @@
-﻿@using System.Reflection
-@using AntBlazor.JsInterop
+﻿@using AntDesign.JsInterop
+@using AntDesign.Docs.Services
 @inherits ComponentBase
 
 <div class="code-box" id="@DemoId">
     <section class="code-box-demo">
         @if (Demo.Iframe > 0)
         {
-            <MockBrowser Height="@Demo.Iframe.Value" WithUrl>
-                @ShowCaseContent
-            </MockBrowser>
+            <MockBrowser Height="@Demo.Iframe.Value" WithUrl="@($"/mock?demoId={DemoId}&type={Demo.Type}")" />
         }
         else
         {
-            @ShowCaseContent
+            @demoService.GetShowCase(Demo.Type)
         }
     </section>
     <section class="code-box-meta markdown">
@@ -44,19 +42,18 @@
     </section>
     <section class="highlight-wrapper @(codeExpand?"highlight-wrapper-expand":"")">
         <div class="highlight">
-            <HighlightedCode Code="@Demo.Code" Language="html"></HighlightedCode>
+            <HighlightedCode Code="@Demo.Code" CanLoad="codeExpand" Language="html"></HighlightedCode>
         </div>
     </section>
-    <Style ScopeId=@DemoId>
+    <style>
         @Demo.Style
-    </Style>
+    </style>
 </div>
 
 @inject InteropService InteropService
+@inject DemoService demoService;
 
 @code {
-
-
 
     [Parameter]
     public string ComponentName { get; set; }
@@ -67,14 +64,6 @@
     private bool codeExpand { get; set; }
 
     protected string DemoId => $"components-{ComponentName.ToLower()}-demo-{Demo.Name}";
-
-
-    RenderFragment ShowCaseContent => (builder) =>
-    {
-        var showCase = Type.GetType($"{Assembly.GetExecutingAssembly().GetName().Name}.{Demo.Type}");
-        builder.OpenComponent(0, showCase);
-        builder.CloseComponent();
-    };
 
     async ValueTask Copy()
     {

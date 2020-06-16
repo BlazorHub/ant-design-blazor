@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AntBlazor.Internal;
+using AntDesign.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using OneOf;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class SubMenu : AntDomComponentBase
     {
@@ -38,6 +38,10 @@ namespace AntBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnTitleClicked { get; set; }
 
+        internal int Level => RootMenu.InternalMode == MenuMode.Inline ? (Parent?.Level ?? 0) + 1 : 0;
+
+        private int PaddingLeft => Level * 24;
+
         private ClassMapper SubMenuMapper { get; } = new ClassMapper();
 
         private bool _isSelected;
@@ -54,10 +58,10 @@ namespace AntBlazor
             ClassMapper
                     .Clear()
                     .Add(prefixCls)
-                    .Add($"{prefixCls}-{RootMenu.InternalMode}")
+                    .Add($"{prefixCls}-{RootMenu?.InternalMode}")
                     .If($"{prefixCls}-disabled", () => Disabled)
                     .If($"{prefixCls}-selected", () => _isSelected)
-                    .If($"{prefixCls}-open", () => RootMenu.InternalMode == MenuMode.Inline && IsOpen)
+                    .If($"{prefixCls}-open", () => RootMenu?.InternalMode == MenuMode.Inline && IsOpen)
                     ;
 
             SubMenuMapper

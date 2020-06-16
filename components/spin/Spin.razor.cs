@@ -5,7 +5,7 @@ using System.Text;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class Spin : AntDomComponentBase
     {
@@ -87,6 +87,14 @@ namespace AntBlazor
                 else
                 {
                     _delayTimer.Stop();
+                }
+            }
+            else
+            {
+                if (_isLoading != Spinning)
+                {
+                    _isLoading = Spinning;
+                    InvokeAsync(StateHasChanged);
                 }
             }
         }

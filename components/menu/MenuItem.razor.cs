@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class MenuItem : AntDomComponentBase
     {
@@ -32,6 +32,8 @@ namespace AntBlazor
 
         public bool IsSelected { get; private set; }
         private string _key;
+
+        private int PaddingLeft => RootMenu.InternalMode == MenuMode.Inline ? ((ParentMenu?.Level ?? 0) + 1) * 24 : 0;
 
         private void SetClass()
         {

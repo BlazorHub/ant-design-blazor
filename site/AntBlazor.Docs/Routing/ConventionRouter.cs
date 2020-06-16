@@ -3,11 +3,11 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using AntBlazor.Docs.Localization;
+using AntDesign.Docs.Localization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 
-namespace AntBlazor.Docs.Routing
+namespace AntDesign.Docs.Routing
 {
     public class ConventionRouter : IComponent, IHandleAfterRender, IDisposable
     {
@@ -98,7 +98,7 @@ namespace AntBlazor.Docs.Routing
                 }
                 else
                 {
-                    NavigationManager.NavigateTo($"{currentCulture.Name}/{relativeUri}", true);
+                    NavigationManager.NavigateTo($"en-US/{relativeUri}", true);
                     return;
                 }
             }

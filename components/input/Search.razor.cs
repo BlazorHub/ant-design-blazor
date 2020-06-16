@@ -4,7 +4,7 @@ using OneOf;
 using System;
 using System.Threading.Tasks;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class Search : Input
     {
@@ -26,7 +26,7 @@ namespace AntBlazor
             {
                 Suffix = new RenderFragment((builder) =>
                 {
-                    builder.OpenComponent<AntIcon>(35);
+                    builder.OpenComponent<Icon>(35);
                     builder.AddAttribute(36, "class", $"{PrefixCls}-search-icon");
                     builder.AddAttribute(37, "type", "search");
                     builder.AddAttribute(38, "onclick", CallbackFactory.Create<MouseEventArgs>(this, HandleSearch));
@@ -37,10 +37,11 @@ namespace AntBlazor
             {
                 AddOnAfter = new RenderFragment((builder) =>
                 {
-                    builder.OpenComponent<AntButton>(_sequence++);
+                    builder.OpenComponent<Button>(_sequence++);
                     builder.AddAttribute(_sequence++, "class", $"{PrefixCls}-search-button");
                     builder.AddAttribute(_sequence++, "type", "primary");
                     builder.AddAttribute(_sequence++, "size", Size);
+
                     if (_isSearching)
                     {
                         builder.AddAttribute(_sequence++, "loading", true);
@@ -96,7 +97,6 @@ namespace AntBlazor
             {
                 await OnSearch.InvokeAsync(EventArgs.Empty);
             }
-            await Task.Delay(TimeSpan.FromSeconds(10));
             _isSearching = false;
             StateHasChanged();
         }

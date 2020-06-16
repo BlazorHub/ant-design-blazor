@@ -1,51 +1,51 @@
 ﻿<div>
-    <AntButton Icon="plus" Type="primary" @onclick="_=>open()">New account</AntButton>
+    <Button Icon="plus" Type="primary" @onclick="_=>open()">New account</Button>
     <Drawer Closable="true" Width="720" Visible="visible" Title='("Submit from in Drawer")' OnClose="_=>close()">
         <Template style="height:90%">
-            <AntRow Gutter="16">
-                <AntCol Span="12">
-                    <AntText>Name</AntText>
-                    <AntInput Placeholder="Please enter user name"></AntInput>
-                </AntCol>
-                <AntCol Span="12">
-                    <AntText>Url</AntText>
-                    <AntInput Placeholder="please enter url">
+            <Row Gutter="16">
+                <Col Span="12">
+                    <Text>Name</Text>
+                    <Input Placeholder="Please enter user name"></Input>
+                </Col>
+                <Col Span="12">
+                    <Text>Url</Text>
+                    <AntDesign.Input Placeholder="please enter url">
                         <AddOnBefore>Http://</AddOnBefore>
                         <AddOnAfter>.Com</AddOnAfter>
-                    </AntInput>
-                </AntCol>
-            </AntRow>
+                    </AntDesign.Input>
+                </Col>
+            </Row>
             <br />
-            <AntRow Gutter="16">
-                <AntCol Span="12">
-                    <AntText>Owner</AntText>
-                    <AntInput Placeholder="Please select a owner"></AntInput>
-                </AntCol>
-                <AntCol Span="12">
-                    <AntText>Type</AntText>
-                    <AntInput Placeholder="please enter url"></AntInput>
-                </AntCol>
-            </AntRow>
+            <Row Gutter="16">
+                <Col Span="12">
+                    <Text>Owner</Text>
+                    <Input Placeholder="Please select a owner"/>
+                </Col>
+                <Col Span="12">
+                    <Text>Type</Text>
+                    <Input Placeholder="please enter url"/>
+                </Col>
+            </Row>
             <br />
 
-            <AntRow>
-                <AntCol Span="24">
-                    <AntText>Description</AntText>
-                    <AntTextArea Placeholder="Please enter your description">
+            <Row>
+                <Col Span="24">
+                    <Text>Description</Text>
+                    <TextArea Placeholder="Please enter your description">
 
-                    </AntTextArea>
-                </AntCol>
-            </AntRow>
+                    </TextArea>
+                </Col>
+            </Row>
             <br />
-            <AntRow>
-                <AntCol Span="18">
+            <Row>
+                <Col Span="18">
 
-                </AntCol>
-                <AntCol Span="6">
-                    <AntButton Type="default">Cancel</AntButton>
-                    <AntButton Type="primary">Submit</AntButton>
-                </AntCol>
-            </AntRow>
+                </Col>
+                <Col Span="6">
+                    <Button Type="default">Cancel</Button>
+                    <Button Type="primary">Submit</Button>
+                </Col>
+            </Row>
         </Template>
     </Drawer>
 </div>

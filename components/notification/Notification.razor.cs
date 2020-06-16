@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
-namespace AntBlazor
+namespace AntDesign
 {
     public partial class Notification
     {
@@ -86,7 +86,7 @@ namespace AntBlazor
 
         private RenderFragment _defaultCloseIcon = (builder) =>
         {
-            builder.OpenComponent<AntIcon>(0);
+            builder.OpenComponent<Icon>(0);
             builder.AddAttribute(1, "Type", "close");
             builder.CloseComponent();
         };
