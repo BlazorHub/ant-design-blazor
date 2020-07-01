@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -11,16 +10,19 @@ namespace AntDesign
     public class IconService
     {
         private static readonly ConcurrentDictionary<string, string> _svgCache = new ConcurrentDictionary<string, string>();
-        private static readonly ConcurrentDictionary<string, string> _customCache = new ConcurrentDictionary<string, string>();
         private readonly HttpClient _httpClient;
         private IJSRuntime _js;
 
-        public IconService(HttpClient httpClient, NavigationManager navigationManager, IJSRuntime js)
-        {
-            if (httpClient != null && navigationManager != null)
-                httpClient.BaseAddress = new Uri(navigationManager.BaseUri);
+        private Uri _baseAddress;
 
-            _httpClient = httpClient;
+        public IconService(IHttpClientFactory httpClientFactory, NavigationManager navigationManager, IJSRuntime js)
+        {
+            if (navigationManager != null)
+                _baseAddress = new Uri(navigationManager.BaseUri);
+
+            if (httpClientFactory != null)
+                _httpClient = httpClientFactory.CreateClient("AntDesign");
+
             _js = js;
         }
 
@@ -33,7 +35,7 @@ namespace AntDesign
             }
             else
             {
-                var res = await _httpClient.GetAsync($"_content/AntDesign/icons/{theme}/{type}.svg");
+                var res = await _httpClient.GetAsync(new Uri(_baseAddress, $"_content/AntDesign/icons/{theme}/{type}.svg"));
                 if (res.IsSuccessStatusCode)
                 {
                     iconImg = await res.Content.ReadAsStringAsync();
@@ -45,7 +47,7 @@ namespace AntDesign
 
         public static string GetStyledSvg(string svgImg, string width = "1em", string height = "1em", string fill = "currentColor", int rotate = 0, bool spin = false)
         {
-            var svgStyle = $"focusable=\"false\" width=\"{width}\" height=\"{height}\" fill=\"{fill}\" style=\"transform: rotate({rotate}deg); \" {(spin ? "class=\"anticon-spin\"" : "")}";
+            var svgStyle = $"focusable=\"false\" width=\"{width}\" height=\"{height}\" fill=\"{fill}\" {(rotate == 0 ? "" : $"style=\"transform: rotate({rotate}deg);\"")}  {(spin ? "class=\"anticon-spin\"" : "")}";
             if (!string.IsNullOrEmpty(svgImg))
             {
                 return svgImg.Insert(svgImg.IndexOf("svg", StringComparison.Ordinal) + 3, $" {svgStyle} ");
@@ -61,13 +63,7 @@ namespace AntDesign
                 return;
             }
 
-            //if (_customCache.ContainsKey(scriptUrl))
-            //{
-            //    return;
-            //}
-
             await _js.InvokeVoidAsync(JSInteropConstants.CreateIconFromfontCN, scriptUrl);
-            //_customCache[scriptUrl] = scriptUrl;
         }
     }
 }

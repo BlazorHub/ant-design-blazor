@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AntDesign
 {
-    public partial class TextArea : Input
+    public partial class TextArea : Input<string>
     {
         private const uint DEFAULT_MIN_ROWS = 1;
 
@@ -90,7 +90,12 @@ namespace AntDesign
             // do not call base method to avoid lost focus
             //base.OnInputAsync(args);
 
-            CurrentValueAsString = args.Value.ToString();
+            _preInputValue = args?.Value?.ToString();
+
+            if (OnChange.HasDelegate)
+            {
+                await OnChange.InvokeAsync(CurrentValueAsString);
+            }
 
             if (AutoSize)
             {

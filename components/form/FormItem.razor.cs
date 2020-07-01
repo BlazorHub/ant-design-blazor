@@ -5,6 +5,7 @@ using AntDesign.Forms;
 using AntDesign.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Linq;
 
 namespace AntDesign
 {
@@ -33,9 +34,12 @@ namespace AntDesign
 
         private string _labelCls = "";
 
-        private RenderFragment<FormItem> _formValidation;
-
         private IControlValueAccessor _control;
+
+        private RenderFragment _formValidationMessages;
+
+        [CascadingParameter]
+        private EditContext CurrentEditContext { get; set; }
 
         protected override void OnInitialized()
         {
@@ -107,16 +111,21 @@ namespace AntDesign
         void IFormItem.AddControl<TValue>(AntInputComponentBase<TValue> control)
         {
             this._control = control;
-            _formValidation = form =>
+
+            CurrentEditContext.OnValidationStateChanged += (s, e) =>
             {
-                return builder =>
-                {
-                    var i = 0;
-                    builder.OpenComponent<FormValidationMessage<TValue>>(i++);
-                    builder.AddAttribute(i++, "For", control.ValueExpression);
-                    builder.AddAttribute(i++, "OnStateChange", EventCallback.Factory.Create<bool>(form, valid => form._isValid = valid));
-                    builder.CloseComponent();
-                };
+                control.ValidationMessages = CurrentEditContext.GetValidationMessages(control.FieldIdentifier).ToArray();
+                this._isValid = !control.ValidationMessages.Any();
+
+                StateHasChanged();
+            };
+
+            _formValidationMessages = builder =>
+            {
+                var i = 0;
+                builder.OpenComponent<FormValidationMessage<TValue>>(i++);
+                builder.AddAttribute(i++, "Control", control);
+                builder.CloseComponent();
             };
 
             if (control.FieldIdentifier.TryGetValidateProperty(out var propertyInfo))

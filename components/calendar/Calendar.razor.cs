@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
@@ -64,7 +66,7 @@ namespace AntDesign
         public Func<DateTime, bool> DisabledDate { get; set; } = null;
 
         protected string _picker;
-        protected readonly DateTime[] _pickerValues = new DateTime[] { DateTime.Now, DateTime.Now };
+        protected readonly DateTime[] PickerValues = new DateTime[] { DateTime.Now, DateTime.Now };
         protected Stack<string> _prePickerStack = new Stack<string>();
 
         public readonly string PrefixCls = "ant-picker-calendar";
@@ -137,7 +139,7 @@ namespace AntDesign
             _prePickerStack.Push(_picker);
             _picker = mode;
 
-            OnPanelChange?.Invoke(_pickerValues[index], _picker);
+            OnPanelChange?.Invoke(PickerValues[index], _picker);
 
             StateHasChanged();
         }
@@ -152,5 +154,7 @@ namespace AntDesign
         }
 
         public string Picker { get { return _picker; } }
+
+        public CultureInfo CultureInfo { get; set; } = CultureInfo.CurrentCulture;
     }
 }

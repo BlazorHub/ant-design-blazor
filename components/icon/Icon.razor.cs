@@ -39,6 +39,9 @@ namespace AntDesign
         [Parameter]
         public string TabIndex { get; set; }
 
+        [Parameter]
+        public bool StopPropagation { get; set; }
+
         [CascadingParameter]
         public Button Button { get; set; }
 
@@ -51,7 +54,7 @@ namespace AntDesign
         [Parameter]
         public RenderFragment Component { get; set; }
 
-        private string _svgImg;
+        protected string _svgImg;
 
         protected override async Task OnInitializedAsync()
         {
@@ -78,7 +81,7 @@ namespace AntDesign
             await base.OnParametersSetAsync();
         }
 
-        private async Task SetupSvgImg()
+        protected virtual async Task SetupSvgImg()
         {
             if (Component != null)
             {

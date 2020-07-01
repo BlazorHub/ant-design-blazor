@@ -99,6 +99,11 @@
         "type": "itemGroup",
         "children": [
           {
+            "title": "AutoComplete",
+            "type": "menuItem",
+            "url": "components/autocomplete"
+          },
+          {
             "title": "Checkbox",
             "type": "menuItem",
             "url": "components/checkbox"
@@ -162,6 +167,11 @@
             "title": "Transfer",
             "type": "menuItem",
             "url": "components/transfer"
+          },
+          {
+            "title": "Upload",
+            "type": "menuItem",
+            "url": "components/upload"
           }
         ]
       },
@@ -183,6 +193,16 @@
             "title": "Carousel",
             "type": "menuItem",
             "url": "components/carousel"
+          },
+          {
+            "title": "Collapse",
+            "type": "menuItem",
+            "url": "components/collapse"
+          },
+          {
+            "title": "Comment",
+            "type": "menuItem",
+            "url": "components/comment"
           },
           {
             "title": "Card",
@@ -210,9 +230,19 @@
             "url": "components/list"
           },
           {
+            "title": "Popover",
+            "type": "menuItem",
+            "url": "components/popover"
+          },
+          {
             "title": "Statistic",
             "type": "menuItem",
             "url": "components/statistic"
+          },
+          {
+            "title": "Tree",
+            "type": "menuItem",
+            "url": "components/tree"
           },
           {
             "title": "Tooltip",
@@ -276,9 +306,19 @@
             "url": "components/progress"
           },
           {
+            "title": "Popconfirm",
+            "type": "menuItem",
+            "url": "components/popconfirm"
+          },
+          {
             "title": "Result",
             "type": "menuItem",
             "url": "components/result"
+          },
+          {
+            "title": "Skeleton",
+            "type": "menuItem",
+            "url": "components/skeleton"
           },
           {
             "title": "Spin",
@@ -291,6 +331,11 @@
         "title": "Other",
         "type": "itemGroup",
         "children": [
+          {
+            "title": "Anchor",
+            "type": "menuItem",
+            "url": "components/anchor"
+          },
           {
             "title": "Divider",
             "type": "menuItem",

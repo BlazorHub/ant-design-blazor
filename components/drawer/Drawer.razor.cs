@@ -88,10 +88,19 @@ namespace AntDesign
         public bool Visible
         {
             get => this._isOpen;
-            set => this._isOpen = value;
+            set
+            {
+                if (this._isOpen && !value)
+                {
+                    _isClosing = true;
+                }
+                else
+                {
+                    _isClosing = false;
+                }
+                this._isOpen = value;
+            }
         }
-
-        [Parameter] public EventCallback OnViewInit { get; set; }
 
         [Parameter] public EventCallback OnClose { get; set; }
 
@@ -101,6 +110,7 @@ namespace AntDesign
 
         private RenderFragment ContentTemplate { get; set; }
 
+        private bool _isClosing = false;
         private bool _isOpen = default;
 
         private string _originalPlacement;
@@ -128,10 +138,10 @@ namespace AntDesign
         }
 
         private bool _isRenderAnimation = false;
-        private const string _duration = "0.3s";
-        private const string _ease = "cubic-bezier(0.78, 0.14, 0.15, 0.86)";
+        private const string Duration = "0.3s";
+        private const string Ease = "cubic-bezier(0.78, 0.14, 0.15, 0.86)";
         private string _widthTransition = "";
-        private readonly string _transformTransition = $"transform {_duration} {_ease} 0s";
+        private readonly string _transformTransition = $"transform {Duration} {Ease} 0s";
         private string _heightTransition = "";
 
         private string Transform
@@ -170,7 +180,7 @@ namespace AntDesign
 
         private Regex _renderInCurrentContainerRegex = new Regex("position:[\\s]*absolute");
 
-        private string DrawerStyle;
+        private string _drawerStyle;
 
         private bool _isPlacementFirstChange = true;
 
@@ -211,7 +221,7 @@ namespace AntDesign
                 }
             }
 
-            DrawerStyle = "";
+            _drawerStyle = "";
 
             base.OnParametersSet();
         }
@@ -238,11 +248,18 @@ namespace AntDesign
                 }
                 else
                 {
-                    if (!string.IsNullOrWhiteSpace(DrawerStyle))
+                    if (!string.IsNullOrWhiteSpace(_drawerStyle))
                     {
-                        DrawerStyle = "";
+                        _drawerStyle = "";
                         StateHasChanged();
                     }
+                }
+            }
+            else
+            {
+                if (_isClosing)
+                {
+                    await HandleClose(true);
                 }
             }
             await base.OnAfterRenderAsync(isFirst);
@@ -288,11 +305,14 @@ namespace AntDesign
             }
         }
 
-        private async Task HandleClose()
+        private async Task HandleClose(bool isChangeByParamater = false)
         {
             _isRenderAnimation = false;
-            await OnClose.InvokeAsync(this);
-            await Task.Delay(10);
+            if (!isChangeByParamater)
+            {
+                await OnClose.InvokeAsync(this);
+                await Task.Delay(10);
+            }
             await JsInvokeAsync(JSInteropConstants.enableDrawerBodyScroll);
         }
 
@@ -301,16 +321,16 @@ namespace AntDesign
             switch (this.Placement)
             {
                 case "left":
-                    _widthTransition = $"width 0s {_ease} {_duration}";
+                    _widthTransition = $"width 0s {Ease} {Duration}";
                     break;
 
                 case "right":
-                    _widthTransition = $"width 0s {_ease} {_duration}";
+                    _widthTransition = $"width 0s {Ease} {Duration}";
                     break;
 
                 case "top":
                 case "bottom":
-                    _heightTransition = $"height 0s {_ease} {_duration}";
+                    _heightTransition = $"height 0s {Ease} {Duration}";
                     break;
 
                 default:
@@ -331,7 +351,12 @@ namespace AntDesign
 
                 style = $"transition:{_transformTransition} {_heightTransition} {_widthTransition};";
             }
-            DrawerStyle = style;
+            _drawerStyle = style;
+        }
+
+        internal async Task InvokeStateHasChangedAsync()
+        {
+            await InvokeAsync(StateHasChanged);
         }
     }
 }
