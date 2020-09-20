@@ -1,0 +1,36 @@
+﻿
+<div>Input</div>
+<AutoComplete Options="@options" OnInput="OnInput">
+    <AutoCompleteInput Placeholder="input here" @bind-Value="@value" />
+</AutoComplete>
+<div>Search</div>
+<AutoComplete Options="@options" OnInput="OnInput">
+    <AutoCompleteSearch Placeholder="input here" @bind-Value="@value" />
+</AutoComplete>
+
+<Divider></Divider>
+<span>bind-Value:@value</span>
+
+
+@code
+{
+    private string value;
+
+    List<string> options = new List<string>();
+
+    void OnInput(ChangeEventArgs e)
+    {
+        var v = e.Value.ToString();
+        if (string.IsNullOrWhiteSpace(v))
+            options = new List<string>();
+        else
+            options = new List<string>()
+{
+                v, v + "1", v + "2"
+            };
+    }
+    void AAAA(KeyboardEventArgs e)
+    {
+        Console.WriteLine(e.Key);
+    }
+}

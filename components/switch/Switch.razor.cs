@@ -9,21 +9,6 @@ namespace AntDesign
     {
         protected string _prefixCls = "ant-switch";
 
-        protected override Task OnParametersSetAsync()
-        {
-            ClassMapper.Clear()
-                .Add(_prefixCls)
-                .If($"{_prefixCls}-checked", () => _isChecked)
-                .If($"{_prefixCls}-disabled", () => Disabled || Loading)
-                .If($"{_prefixCls}-loading", () => Loading)
-                .If($"{_prefixCls}-small", () => Size.Equals("small"))
-                ;
-
-            return base.OnParametersSetAsync();
-        }
-
-        private bool _isChecked = false;
-
         [Parameter]
         public bool Checked { get; set; }
 
@@ -40,35 +25,41 @@ namespace AntDesign
         public EventCallback<bool> OnChange { get; set; }
 
         [Parameter]
-        public OneOf<string, RenderFragment> CheckedChildren { get; set; }
+        public string CheckedChildren { get; set; } = string.Empty;
 
         [Parameter]
-        public OneOf<string, RenderFragment> UnCheckedChildren { get; set; }
+        public RenderFragment CheckedChildrenTemplate { get; set; }
+
+        [Parameter]
+        public string UnCheckedChildren { get; set; } = string.Empty;
+
+        [Parameter]
+        public RenderFragment UnCheckedChildrenTemplate { get; set; }
 
         private bool _clickAnimating = false;
 
         protected override void OnInitialized()
         {
-            this._isChecked = Checked;
             base.OnInitialized();
-        }
 
-        private void UpdateValue(bool value)
-        {
-            if (this._isChecked != value)
-            {
-                this._isChecked = value;
-                CurrentValue = value;
-                this.OnChange.InvokeAsync(this._isChecked);
-            }
+            this.CurrentValue = this.CurrentValue ? this.CurrentValue : this.Checked;
+
+            ClassMapper.Clear()
+                .Add(_prefixCls)
+                .If($"{_prefixCls}-checked", () => CurrentValue)
+                .If($"{_prefixCls}-disabled", () => Disabled || Loading)
+                .If($"{_prefixCls}-loading", () => Loading)
+                .If($"{_prefixCls}-small", () => Size == "small")
+                ;
         }
 
         private void HandleClick(MouseEventArgs e)
         {
             if (!Disabled && !Loading && !Control)
             {
-                CurrentValue = !this._isChecked;
-                this.UpdateValue(!this._isChecked);
+                this.CurrentValue = !CurrentValue;
+
+                this.OnChange.InvokeAsync(CurrentValue);
             }
         }
 

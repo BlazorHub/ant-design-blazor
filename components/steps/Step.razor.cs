@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Generic;
+using OneOf;
 
 namespace AntDesign
 {
@@ -13,8 +14,11 @@ namespace AntDesign
         private readonly Dictionary<string, object> _containerAttributes = new Dictionary<string, object>();
 
         internal bool Clickable { get; set; }
+
         internal bool Last { get; set; }
+
         internal bool ShowProcessDot { get; set; }
+
         internal string GroupStatus { get; set; } = string.Empty;
 
         internal int GroupCurrentIndex
@@ -32,6 +36,8 @@ namespace AntDesign
         }
 
         internal int Index { get; set; }
+        internal double? Percent { get; set; }
+        internal string Size { get; set; } = "default";
         internal RenderFragment ProgressDot { get; set; }
         internal string Direction { get; set; } = "horizontal";
 
@@ -47,22 +53,35 @@ namespace AntDesign
             get => _status;
             set
             {
-                _status = value;
-                _isCustomStatus = true;
-                SetClassMap();
+                if (_status != value)
+                {
+                    _status = value;
+                    _isCustomStatus = true;
+                    SetClassMap();
+                }
             }
         }
 
         [Parameter] public string Title { get; set; } = string.Empty;
+
+        [Parameter] public RenderFragment TitleTemplate { get; set; }
+
         [Parameter] public string Subtitle { get; set; } = string.Empty;
+
+        [Parameter] public RenderFragment SubtitleTemplate { get; set; }
+
         [Parameter] public string Description { get; set; } = string.Empty;
+
+        [Parameter] public RenderFragment DescriptionTemplate { get; set; }
+
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
         [Parameter] public bool Disabled { get; set; }
 
         protected override void OnInitialized()
         {
-            Parent._children.Add(this);
-            this.Index = Parent._children.Count - 1;
+            Parent?.AddStep(this);
+
             SetClassMap();
             if (Clickable && !Disabled)
             {
@@ -100,6 +119,18 @@ namespace AntDesign
         {
             base.OnParametersSet();
             SetClassMap();
+        }
+
+        private void HandleClick(MouseEventArgs args)
+        {
+            if (Clickable && !Disabled)
+            {
+                Parent.NavigateTo(Index);
+                if (OnClick.HasDelegate)
+                {
+                    OnClick.InvokeAsync(args);
+                }
+            }
         }
 
         internal static void MarkForCheck()

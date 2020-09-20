@@ -13,8 +13,24 @@ namespace AntDesign.Internal
         [CascadingParameter(Name = "PrefixCls")]
         public string PrefixCls { get; set; } = "ant-dropdown";
 
+        private string _popupContainerSelectorFromCascade = "";
+
+        [CascadingParameter(Name = "PopupContainerSelector")]
+        public string PopupContainerSelectorFromCascade
+        {
+            get
+            {
+                return _popupContainerSelectorFromCascade;
+            }
+            set
+            {
+                _popupContainerSelectorFromCascade = value;
+                PopupContainerSelector = value;
+            }
+        }
+
         [Parameter]
-        public string PopupContainerSelector { get; set; }
+        public string PopupContainerSelector { get; set; } = "body";
 
         [Parameter]
         public string PlacementCls { get; set; }
@@ -44,10 +60,20 @@ namespace AntDesign.Internal
         public bool IsButton { get; set; } = false;
 
         [Parameter]
+        public bool InlineFlexMode { get; set; } = false;
+
+        [Parameter]
+        public bool HiddenMode { get; set; } = false;
+
+        [Parameter]
         public TriggerType[] Trigger { get; set; } = new TriggerType[] { TriggerType.Hover };
 
         [Parameter]
         public PlacementType Placement { get; set; } = PlacementType.BottomLeft;
+
+        [Parameter] public Action OnMouseEnter { get; set; }
+
+        [Parameter] public Action OnMouseLeave { get; set; }
 
         [Parameter]
         public EventCallback<bool> OnVisibleChange { get; set; }
@@ -76,7 +102,7 @@ namespace AntDesign.Internal
         {
             base.OnInitialized();
 
-            DomEventService.AddEventListener("app", "mouseup", OnMouseUp);
+            DomEventService.AddEventListener("document", "mouseup", OnMouseUp);
         }
 
         protected virtual async Task OnTriggerMouseEnter()
@@ -89,6 +115,8 @@ namespace AntDesign.Internal
 
                 await Show();
             }
+
+            OnMouseEnter?.Invoke();
         }
 
         protected virtual async Task OnTriggerMouseLeave()
@@ -101,6 +129,8 @@ namespace AntDesign.Internal
 
                 await Hide();
             }
+
+            OnMouseLeave?.Invoke();
         }
 
         protected virtual async Task OnTriggerFocusIn()
@@ -163,7 +193,7 @@ namespace AntDesign.Internal
 
         protected virtual async Task OnTriggerClick()
         {
-            if (IsContainTrigger(TriggerType.Click))
+            if (IsContainTrigger(TriggerType.Click) || IsContainTrigger(TriggerType.ContextMenu))
             {
                 if (_overlay.IsPopup())
                 {
@@ -212,7 +242,10 @@ namespace AntDesign.Internal
             await OnOverlayHiding.InvokeAsync(visible);
         }
 
-        public virtual string GetPlacementClass()
+        protected virtual void OnOverlayShow() { }
+        protected virtual void OnOverlayHide() { }
+
+        internal virtual string GetPlacementClass()
         {
             if (!string.IsNullOrEmpty(PlacementCls))
             {
@@ -221,7 +254,7 @@ namespace AntDesign.Internal
             return $"{PrefixCls}-placement-{Placement.Name}";
         }
 
-        public virtual string GetOverlayEnterClass()
+        internal virtual string GetOverlayEnterClass()
         {
             if (!string.IsNullOrEmpty(OverlayEnterCls))
             {
@@ -230,7 +263,7 @@ namespace AntDesign.Internal
             return $"slide-{Placement.SlideName}-enter slide-{Placement.SlideName}-enter-active slide-{Placement.SlideName}";
         }
 
-        public virtual string GetOverlayLeaveClass()
+        internal virtual string GetOverlayLeaveClass()
         {
             if (!string.IsNullOrEmpty(OverlayLeaveCls))
             {
@@ -239,7 +272,7 @@ namespace AntDesign.Internal
             return $"slide-{Placement.SlideName}-leave slide-{Placement.SlideName}-leave-active slide-{Placement.SlideName}";
         }
 
-        public virtual string GetOverlayHiddenClass()
+        internal virtual string GetOverlayHiddenClass()
         {
             if (!string.IsNullOrEmpty(OverlayHiddenCls))
             {
@@ -248,24 +281,34 @@ namespace AntDesign.Internal
             return $"{PrefixCls}-hidden";
         }
 
-        public virtual async Task Show(int? overlayLeft = null, int? overlayTop = null)
+        internal virtual async Task Show(int? overlayLeft = null, int? overlayTop = null)
         {
             await _overlay.Show(overlayLeft, overlayTop);
         }
 
-        public virtual async Task Hide(bool force = false)
+        internal virtual async Task Hide(bool force = false)
         {
             await _overlay.Hide(force);
         }
 
-        public Overlay GetOverlayComponent()
+        internal Overlay GetOverlayComponent()
         {
             return _overlay;
         }
 
-        public async Task<Element> GetTriggerDomInfo()
+        internal async Task<Element> GetTriggerDomInfo()
         {
-            return await JsInvokeAsync<Element>(JSInteropConstants.getFirstChildDomInfo, Ref);
+            return await JsInvokeAsync<Element>(JSInteropConstants.GetFirstChildDomInfo, Ref);
+        }
+
+        public async Task Close()
+        {
+            await _overlay.Hide(true);
+        }
+
+        public bool IsOverlayShow()
+        {
+            return _overlay != null ? _overlay.IsPopup() : false;
         }
     }
 }

@@ -13,7 +13,10 @@ namespace AntDesign
     public partial class Popconfirm : OverlayTrigger
     {
         [Parameter]
-        public OneOf<string, RenderFragment> Title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+
+        [Parameter]
+        public RenderFragment TitleTemplate { get; set; }
 
         [Parameter]
         public string CancelText { get; set; } = "Cancel";
@@ -31,7 +34,10 @@ namespace AntDesign
         public ButtonProps CancelButtonProps { get; set; }
 
         [Parameter]
-        public RenderFragment Icon { get; set; }
+        public string Icon { get; set; } = "exclamation-circle";
+
+        [Parameter]
+        public RenderFragment IconTemplate { get; set; }
 
         [Parameter]
         public EventCallback<MouseEventArgs> OnCancel { get; set; }
@@ -55,7 +61,7 @@ namespace AntDesign
             Trigger = new[] { TriggerType.Click };
         }
 
-        public override async Task Show(int? overlayLeft = null, int? overlayTop = null)
+        internal override async Task Show(int? overlayLeft = null, int? overlayTop = null)
         {
             if (Trigger.Contains(TriggerType.Hover))
             {
@@ -65,7 +71,7 @@ namespace AntDesign
             await base.Show(overlayLeft, overlayTop);
         }
 
-        public override async Task Hide(bool force = false)
+        internal override async Task Hide(bool force = false)
         {
             if (Trigger.Contains(TriggerType.Hover))
             {

@@ -25,6 +25,12 @@ namespace AntDesign.Internal
         [Parameter]
         public EventCallback OnOverlayMouseLeave { get; set; }
 
+        [Parameter]
+        public Action OnShow { get; set; }
+
+        [Parameter]
+        public Action OnHide { get; set; }
+
         [CascadingParameter(Name = "ArrowPointAtCenter")]
         public bool ArrowPointAtCenter { get; set; }
 
@@ -46,6 +52,9 @@ namespace AntDesign.Internal
         [Parameter]
         public int HorizontalOffset { get; set; } = 4;
 
+        [Parameter]
+        public bool HiddenMode { get; set; } = false;
+
         private bool _hasAddOverlayToBody = false;
         private bool _isPreventHide = false;
         private bool _isChildOverlayShow = false;
@@ -63,7 +72,6 @@ namespace AntDesign.Internal
 
         private string _overlayStyle = "";
         private string _overlayCls = "";
-
 
         private const int ARROW_SIZE = 13;
         private const int HORIZONTAL_ARROW_SHIFT = 13;
@@ -88,11 +96,11 @@ namespace AntDesign.Internal
         {
             if (firstRender)
             {
-                await JsInvokeAsync(JSInteropConstants.addClsToFirstChild, Ref, $"{Trigger.PrefixCls}-trigger");
+                await JsInvokeAsync(JSInteropConstants.AddClsToFirstChild, Ref, $"{Trigger.PrefixCls}-trigger");
 
                 if (Trigger.Disabled)
                 {
-                    await JsInvokeAsync(JSInteropConstants.addClsToFirstChild, Ref, $"disabled");
+                    await JsInvokeAsync(JSInteropConstants.AddClsToFirstChild, Ref, $"disabled");
                 }
             }
 
@@ -116,18 +124,29 @@ namespace AntDesign.Internal
                 _ = InvokeAsync(async () =>
                 {
                     await Task.Delay(100);
-                    await JsInvokeAsync(JSInteropConstants.delElementFrom, Ref, Trigger.PopupContainerSelector);
+                    await JsInvokeAsync(JSInteropConstants.DelElementFrom, Ref, Trigger.PopupContainerSelector);
                 });
             }
 
             base.Dispose(disposing);
         }
 
-        public async Task Show(int? overlayLeft = null, int? overlayTop = null)
+        internal async Task Show(int? overlayLeft = null, int? overlayTop = null)
         {
             if (_isOverlayShow || Trigger.Disabled)
             {
                 return;
+            }
+
+            Element trigger = await JsInvokeAsync<Element>(JSInteropConstants.GetFirstChildDomInfo, Trigger.Ref);
+
+            // fix bug in submenu: Overlay show when OvelayTrigger is not rendered complete.
+            // I try to render Overlay when OvelayTrigger’s OnAfterRender is called, but is still get negative absoluteLeft
+            // This may be a bad solution, but for now I can only do it this way.
+            while (trigger.absoluteLeft <= 0 && trigger.clientWidth <= 0)
+            {
+                await Task.Delay(50);
+                trigger = await JsInvokeAsync<Element>(JSInteropConstants.GetFirstChildDomInfo, Trigger.Ref);
             }
 
             _overlayLeft = overlayLeft;
@@ -148,9 +167,8 @@ namespace AntDesign.Internal
 
             await AddOverlayToBody();
 
-            Element trigger = await JsInvokeAsync<Element>(JSInteropConstants.getFirstChildDomInfo, Trigger.Ref);
-            Element overlayElement = await JsInvokeAsync<Element>(JSInteropConstants.getDomInfo, Ref);
-            Element containerElement = await JsInvokeAsync<Element>(JSInteropConstants.getDomInfo, Trigger.PopupContainerSelector);
+            Element overlayElement = await JsInvokeAsync<Element>(JSInteropConstants.GetDomInfo, Ref);
+            Element containerElement = await JsInvokeAsync<Element>(JSInteropConstants.GetDomInfo, Trigger.PopupContainerSelector);
 
             int left = GetOverlayLeft(trigger, overlayElement, containerElement);
             int top = GetOverlayTop(trigger, overlayElement, containerElement);
@@ -162,9 +180,11 @@ namespace AntDesign.Internal
             await Trigger.OnVisibleChange.InvokeAsync(true);
 
             StateHasChanged();
+
+            OnShow?.Invoke();
         }
 
-        public async Task Hide(bool force = false)
+        internal async Task Hide(bool force = false)
         {
             if (!_isOverlayShow)
             {
@@ -198,9 +218,11 @@ namespace AntDesign.Internal
             await Trigger.OnVisibleChange.InvokeAsync(false);
 
             StateHasChanged();
+
+            OnHide?.Invoke();
         }
 
-        public void PreventHide(bool prevent)
+        internal void PreventHide(bool prevent)
         {
             _isPreventHide = prevent;
         }
@@ -210,12 +232,12 @@ namespace AntDesign.Internal
         /// overlay would not hide if any child is showing
         /// </summary>
         /// <param name="isChildOverlayShow"></param>
-        public void UpdateChildState(bool isChildOverlayShow)
+        internal void UpdateChildState(bool isChildOverlayShow)
         {
             _isChildOverlayShow = isChildOverlayShow;
         }
 
-        public bool IsPopup()
+        internal bool IsPopup()
         {
             return _isOverlayShow;
         }
@@ -225,7 +247,7 @@ namespace AntDesign.Internal
         /// when overlay is hiding(playing hide animation), IsPopup return false, IsHiding return true.
         /// </summary>
         /// <returns></returns>
-        public bool IsHiding()
+        internal bool IsHiding()
         {
             return _isOverlayHiding;
         }
@@ -234,7 +256,7 @@ namespace AntDesign.Internal
         {
             if (!_hasAddOverlayToBody)
             {
-                await JsInvokeAsync(JSInteropConstants.addElementTo, Ref, Trigger.PopupContainerSelector);
+                await JsInvokeAsync(JSInteropConstants.AddElementTo, Ref, Trigger.PopupContainerSelector);
 
                 _hasAddOverlayToBody = true;
             }

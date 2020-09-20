@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
+using AntDesign.Core.Reflection;
+using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 
 namespace AntDesign
 {
@@ -15,19 +15,30 @@ namespace AntDesign
         public Expression<Func<TData>> FieldExpression { get; set; }
 
         [Parameter]
-        public bool Sort { get; set; }
-
-        [Parameter]
         public RenderFragment<TData> CellRender { get; set; }
 
         [Parameter]
         public TData Field { get; set; }
 
-        private FieldIdentifier? _fieldIdentifier;
+        [Parameter]
+        public string Format { get; set; }
 
-        public string DisplayName => _fieldIdentifier?.GetDisplayName();
+        [Parameter]
+        public bool Sortable { get; set; }
 
-        public string FieldName => _fieldIdentifier?.FieldName;
+        [Parameter]
+        public string Sort { get; set; }
+
+        [Parameter]
+        public bool ShowSorterTooltip { get; set; } = true;
+
+        private PropertyReflector? _propertyReflector;
+
+        public string DisplayName => _propertyReflector?.DisplayName;
+
+        public string FieldName => _propertyReflector?.PropertyName;
+
+        public ITableSortModel SortModel { get; private set; }
 
         protected override void OnInitialized()
         {
@@ -35,7 +46,44 @@ namespace AntDesign
 
             if (FieldExpression != null)
             {
-                _fieldIdentifier = FieldIdentifier.Create(FieldExpression);
+                _propertyReflector = PropertyReflector.Create(FieldExpression);
+                if (Sortable)
+                {
+                    SortModel = new SortModel<TData>(_propertyReflector.Value.PropertyInfo, 1, Sort);
+                }
+            }
+
+            ClassMapper
+                .If("ant-table-column-has-sorters", () => Sortable)
+                .If($"ant-table-column-sort", () => Sortable && SortModel.SortType.IsIn(SortType.Ascending, SortType.Descending));
+        }
+
+        private void HandelHeaderClick()
+        {
+            if (Sortable)
+            {
+                SortModel.SwitchSortType();
+                Table.ReloadAndInvokeChange();
+            }
+        }
+
+        private string SorterTooltip
+        {
+            get
+            {
+                var next = SortModel.NextType();
+                if (next == SortType.None)
+                {
+                    return Table.Locale.CancelSort;
+                }
+                else if (next == SortType.Ascending)
+                {
+                    return Table.Locale.TriggerAsc;
+                }
+                else
+                {
+                    return Table.Locale.TriggerDesc;
+                }
             }
         }
     }

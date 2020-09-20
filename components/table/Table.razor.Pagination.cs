@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 
 namespace AntDesign
 {
-    public partial class Table<TItem>
+    public partial class Table<TItem> : ITable
     {
         [Parameter]
         public bool HidePagination { get; set; }
@@ -16,10 +13,25 @@ namespace AntDesign
         /// topLeft | topCenter | topRight |bottomLeft | bottomCenter | bottomRight
         /// </summary>
         [Parameter]
-        public string PaginationPosition { get; set; } = "bottomRight";
+        public string PaginationPosition
+        {
+            get => _paginationPosition;
+            set
+            {
+                _paginationPosition = value;
+                InitializePagination();
+            }
+        }
 
         [Parameter]
-        public int Total { get; set; }
+        public int Total
+        {
+            get => _total > _dataSourceCount ? _total : _dataSourceCount;
+            set
+            {
+                _total = value;
+            }
+        }
 
         [Parameter]
         public EventCallback<int> TotalChanged { get; set; }
@@ -42,24 +54,34 @@ namespace AntDesign
         [Parameter]
         public EventCallback<PaginationEventArgs> OnPageSizeChange { get; set; }
 
-        private IEnumerable<TItem> ShowItems => Total > 0 ? DataSource : DataSource.Skip((PageIndex - 1) * PageSize).Take(PageSize);
-
-        private int ActualTotal => Total > 0 ? Total : _total;
-
         private int _total = 0;
+        private int _dataSourceCount = 0;
+        private string _paginationPosition = "bottomRight";
+        private string _paginationClass;
 
-        private string PaginationClass => $"ant-table-pagination ant-table-pagination-{Regex.Replace(PaginationPosition, "bottom|top", "").ToLowerInvariant()}";
-
-        private void HandlePageIndexChange(PaginationEventArgs args)
+        private void InitializePagination()
         {
-            PageIndexChanged.InvokeAsync(args.PageIndex);
-            OnPageIndexChange.InvokeAsync(args);
+            _paginationClass = $"ant-table-pagination ant-table-pagination-{Regex.Replace(_paginationPosition, "bottom|top", "").ToLowerInvariant()}";
+        }
 
-            ChangeSelection(null);
+        private async Task HandlePageIndexChange(PaginationEventArgs args)
+        {
+            PageIndex = args.PageIndex;
+
+            await PageIndexChanged.InvokeAsync(args.PageIndex);
+            await OnPageIndexChange.InvokeAsync(args);
+
+            ReloadAndInvokeChange();
+
+            StateHasChanged();
         }
 
         private void HandlePageSizeChange(PaginationEventArgs args)
         {
+            PageSize = args.PageSize;
+
+            ReloadAndInvokeChange();
+
             PageSizeChanged.InvokeAsync(args.PageSize);
             OnPageSizeChange.InvokeAsync(args);
         }

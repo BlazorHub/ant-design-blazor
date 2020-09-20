@@ -28,7 +28,14 @@ namespace AntDesign
         [Parameter]
         public bool Centered { get; set; }
 
-        [Parameter] public bool Closable { get; set; } = true;
+        [Parameter]
+        public bool Closable { get; set; } = true;
+
+        [Parameter]
+        public bool Draggable { get; set; }
+
+        [Parameter]
+        public bool DragInViewport { get; set; } = true;
 
         private static readonly RenderFragment _defaultCloseIcon = (builder) =>
         {
@@ -141,6 +148,8 @@ namespace AntDesign
                 CancelText = CancelText,
                 Centered = Centered,
                 Closable = Closable,
+                Draggable = Draggable,
+                DragInViewport = DragInViewport,
                 CloseIcon = CloseIcon,
                 ConfirmLoading = ConfirmLoading,
                 DestroyOnClose = DestroyOnClose,
@@ -199,13 +208,13 @@ namespace AntDesign
             {
                 if (!_hasFocus)
                 {
-                    await JsInvokeAsync(JSInteropConstants.focusDialog, $"#{_dialog.SentinelStart}");
+                    await JsInvokeAsync(JSInteropConstants.FocusDialog, $"#{_dialog.SentinelStart}");
                     _hasFocus = true;
                 }
             }
             else
             {
-                if (DestroyOnClose)
+                if (_hasAdd && DestroyOnClose)
                 {
                     if (_dialog != null)
                     {
@@ -214,6 +223,11 @@ namespace AntDesign
                     _hasAdd = false;
                     _hasFocus = false;
                     await InvokeAsync(StateHasChanged);
+                }
+                if (!DestroyOnClose && _dialog != null)
+                {
+                    await Task.Delay(250);
+                    await _dialog.TryResetModalStyle();
                 }
             }
             await base.OnAfterRenderAsync(isFirst);

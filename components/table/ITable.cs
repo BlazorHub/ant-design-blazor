@@ -2,12 +2,20 @@
 {
     public interface ITable
     {
-        internal ISelectionColumn HeaderSelection { get; set; }
+        internal ISelectionColumn Selection { get; set; }
 
-        internal void SelectionChanged(int[] checkedIndex);
+        public TableLocale Locale { get; set; }
+
+        internal void SelectionChanged();
 
         internal void Refresh();
 
+        internal void ReloadAndInvokeChange();
+
         void SetSelection(string[] keys);
+
+        internal int[] GetSelectedCacheKeys();
+
+        void ReloadData();
     }
 }

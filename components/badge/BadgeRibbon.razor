@@ -1,0 +1,13 @@
+@namespace AntDesign
+@inherits AntDomComponentBase
+
+<div class="ant-ribbon-wrapper">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    <div class="@ClassMapper.Class" style="@_colorStyle">
+        @if (TextTemplate != null)@TextTemplate else @Text
+        <div class="ant-ribbon-corner" style="@_cornerColorStyle" />
+    </div>
+</div>

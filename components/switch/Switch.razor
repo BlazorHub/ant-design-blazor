@@ -2,46 +2,33 @@
 @inherits AntInputComponentBase<bool>
 
 <button type="button" role="switch"
-        aria-checked="@(_isChecked?"true":"false")"
-        disabled="@Disabled"
+        aria-checked="@(CurrentValue?"true":"false")"
+        disabled="@(Disabled||Loading)"
         class="@ClassMapper.Class"
         style="@Style"
         ant-click-animating="@(_clickAnimating?"true":"false")"
         @onmouseover="HandleMouseOver"
         @onmouseout="HandleMouseOut"
         @onclick="HandleClick">
-    @if (Loading)
-    {
-        <Icon Type="loading" Class="@($"{_prefixCls}-loading-icon")" />
-    }
-    <div class="@($"{_prefixCls}-handle")"></div>
-    <span class="@($"{_prefixCls}-inner")">
-        @if (_isChecked)
+    <div class="@($"{_prefixCls}-handle")">
+        @if (Loading)
         {
-            if (CheckedChildren.IsT0)
-            {
-                @(CheckedChildren.AsT0)
-            }
-            else
-            {
-                @(CheckedChildren.AsT1)
-            }
+            <Icon Type="loading" Class="@($"{_prefixCls}-loading-icon")" />
+        }
+    </div>
+    <span class="@($"{_prefixCls}-inner")">
+        @if (CurrentValue)
+        {
+            if (CheckedChildrenTemplate != null)@CheckedChildrenTemplate else @CheckedChildren
         }
         else
         {
-            if (UnCheckedChildren.IsT0)
-            {
-                @(UnCheckedChildren.AsT0)
-            }
-            else
-            {
-                @(UnCheckedChildren.AsT1)
-            }
+            if (UnCheckedChildrenTemplate != null)@UnCheckedChildrenTemplate else @UnCheckedChildren
         }
     </span>
 
     <!--animation-->
-    @if (_isChecked)
+    @if (CurrentValue)
     {
         <div class="ant-click-animating-node"></div>
     }

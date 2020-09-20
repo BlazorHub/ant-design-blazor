@@ -1,12 +1,14 @@
 @namespace AntDesign
 @inherits AntDomComponentBase
+@using AntDesign.TableModels
+@using System.Text.Json
 @typeparam TItem
 
 <div class="ant-table-wrapper">
     <Spin Spinning="Loading">
         @if (!HidePagination && PaginationPosition.Contains("top"))
         {
-            <Pagination Class="@PaginationClass"
+            <Pagination Class="@_paginationClass"
                         Total="Total"
                         PageSize="PageSize"
                         Current="PageIndex"
@@ -15,9 +17,10 @@
         }
         <CascadingValue Value="@this" TValue="ITable">
             <div class="@ClassMapper.Class">
-                @if (@Title.IsT0 && !string.IsNullOrEmpty(Title.AsT0) || @Title.IsT1 && Title.AsT1 != null) {
+                @if (TitleTemplate != null || Title != null)
+                {
                     <div class="ant-table-title">
-                        @if(Title.IsT0) {@Title.AsT0} else {@Title.AsT1}
+                        @if (TitleTemplate != null)@TitleTemplate else @Title
                     </div>
                 }
                 <div class="ant-table-container">
@@ -51,22 +54,23 @@
                                 @colGroup(this)
                                 @header(this)
                                 <tbody class="ant-table-tbody">
-                                @body(this)
+                                    @body(this)
                                 </tbody>
                             </table>
                         </div>
                     }
                 </div>
-                @if (@Footer.IsT0 && !string.IsNullOrEmpty(Footer.AsT0) || @Footer.IsT1 && Footer.AsT1 != null) {
+                @if (FooterTemplate != null || Footer != null)
+                {
                     <div class="ant-table-footer">
-                        @if(Footer.IsT0) {@Footer.AsT0} else {@Footer.AsT1}
+                        @if (FooterTemplate != null)@FooterTemplate else @Footer
                     </div>
                 }
             </div>
         </CascadingValue>
         @if (!HidePagination && PaginationPosition.Contains("bottom"))
         {
-            <Pagination Class="@PaginationClass"
+            <Pagination Class="@_paginationClass"
                         Total="Total"
                         PageSize="PageSize"
                         Current="PageIndex"
@@ -104,7 +108,7 @@ RenderFragment<Table<TItem>> colGroup = table =>
         <colgroup>
             @if (_fieldModel != null)
             {
-                @table.ChildContent(Table<TItem>._fieldModel)
+                @table.ChildContent(_fieldModel)
             }
             @if (table.ScrollY != null)
             {
@@ -117,26 +121,33 @@ RenderFragment<Table<TItem>> colGroup = table =>
 RenderFragment<Table<TItem>> body = table =>
 @<Template>
 
-    @if (table.ActualTotal <= 0)
+    @if (table.Total <= 0)
     {
         <tr class="ant-table-placeholder">
-            <td colspan="6" class="ant-table-cell">
+            <td colspan="@table.ColumnContext.Columns.Count" class="ant-table-cell">
                 <Empty Simple />
             </td>
         </tr>
     }
-    else if (table.ShowItems != null && table.ColumnContext.Columns.Count > 0)
+    else if (table._showItems != null && table.ColumnContext.Columns.Count > 0)
     {
-        for (int i = 0; i < table.ShowItems.Count(); i++)
+        for (int i = 0; i < table._showItems.Count(); i++)
         {
             var rowIndex = table.PageSize * (table.PageIndex - 1) + i + 1;
-            var data = table.ShowItems.ElementAt(i);
-            var @checked = table._headerSelection?.RowSelections.ElementAtOrDefault(i)?.Checked ?? false;
+            var data = table._showItems.ElementAt(i);
+            var cacheKey = data.GetHashCode();
+            if (!table._dataSourceCache.ContainsKey(cacheKey))
+            {
+                table._dataSourceCache[cacheKey] = new RowData<TItem>(rowIndex, table.PageIndex, data);
+            }
+            var selected = table._dataSourceCache[cacheKey].Selected;
             <CascadingValue Value="@rowIndex" Name="RowIndex">
                 <CascadingValue Value="table.ColumnContext">
-                    <tr data-row-id="@rowIndex" class="ant-table-row ant-table-row-level-0 @(@checked ? "ant-table-row-selected" : "")">
-                        @table.ChildContent(data)
-                    </tr>
+                    <CascadingValue Value="cacheKey" Name="CacheKey">
+                        <tr data-row-id="@rowIndex" class="ant-table-row ant-table-row-level-0 @(selected ? "ant-table-row-selected" : "")">
+                            @table.ChildContent(data)
+                        </tr>
+                    </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
         }

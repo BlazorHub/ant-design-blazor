@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using AntDesign.Internal;
 using Microsoft.AspNetCore.Components;
 
 namespace AntDesign
@@ -10,11 +11,13 @@ namespace AntDesign
     public partial class Calendar : AntDomComponentBase, IDatePicker
     {
         DateTime IDatePicker.CurrentDate { get; set; } = DateTime.Now;
+        DateTime? IDatePicker.HoverDateTime { get; set; }
 
         [Parameter]
         public DateTime Value { get; set; } = DateTime.Now;
 
         private DateTime _defaultValue;
+
         [Parameter]
         public DateTime DefaultValue
         {
@@ -153,8 +156,28 @@ namespace AntDesign
         {
         }
 
+        public int GetOnFocusPickerIndex()
+        {
+            return 0;
+        }
+
+        void IDatePicker.InvokeStateHasChanged()
+        {
+            StateHasChanged();
+        }
+
+        string IDatePicker.GetFormatValue(DateTime value, int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDatePicker.ChangePlaceholder(string placeholder, int index)
+        {
+            throw new NotImplementedException();
+        }
+
         public string Picker { get { return _picker; } }
 
-        public CultureInfo CultureInfo { get; set; } = CultureInfo.CurrentCulture;
+        public CultureInfo CultureInfo { get; set; } = CultureInfo.DefaultThreadCurrentUICulture;
     }
 }

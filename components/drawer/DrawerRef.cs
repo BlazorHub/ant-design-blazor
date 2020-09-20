@@ -5,51 +5,33 @@ using System.Threading.Tasks;
 
 namespace AntDesign
 {
-    public class DrawerRef<TResult> : DrawerRef
+    public class DrawerRef<TResult> : IDrawerRef
     {
-        public new Func<TResult, Task> OnClose { get; set; }
+        public DrawerOptions Options { get; set; }
 
-        internal DrawerRef(DrawerConfig config, DrawerService service) : base(config, service)
-        {
-
-        }
-
-        /// <summary>
-        /// 关闭抽屉
-        /// </summary>
-        /// <returns></returns>
-        public async Task CloseAsync(TResult result)
-        {
-            await _service.CloseAsync(this);
-            await OnClose.Invoke(result);
-        }
-
-    }
-
-    public class DrawerRef
-    {
-        public DrawerConfig Config { get; set; }
         public Drawer Drawer { get; set; }
-
-        protected DrawerService _service;
 
         public Func<Task> OnOpen { get; set; }
 
-        public Func<Task> OnClose { get; set; }
+        public Func<DrawerClosingEventArgs, Task> OnClosing { get; set; }
 
-        internal DrawerRef(DrawerConfig config)
+        public Func<TResult, Task> OnClosed { get; set; }
+
+        private DrawerService _service;
+
+        internal DrawerRef(DrawerOptions options)
         {
-            Config = config;
+            Options = options;
         }
 
-        internal DrawerRef(DrawerConfig config, DrawerService service)
+        internal DrawerRef(DrawerOptions options, DrawerService service)
         {
-            Config = config;
+            Options = options;
             _service = service;
         }
 
         /// <summary>
-        /// 打开抽屉
+        /// open a drawer
         /// </summary>
         /// <returns></returns>
         public async Task OpenAsync()
@@ -60,27 +42,37 @@ namespace AntDesign
         }
 
         /// <summary>
-        /// 关闭抽屉无返回值
+        /// close the drawer without return value
         /// </summary>
         /// <returns></returns>
         public async Task CloseAsync()
         {
-            await _service.CloseAsync(this);
-            if (OnClose != null)
-                await OnClose.Invoke();
+            await CloseAsync(default);
         }
 
-
-        internal async Task HandleOnCancel()
+        /// <summary>
+        /// 关闭抽屉
+        /// </summary>
+        /// <returns></returns>
+        public async Task CloseAsync(TResult result)
         {
-            bool isClose = true;
-            if (Config.OnCancel != null)
-            {
-                isClose = Config.OnCancel.Invoke() ?? true;
-            }
-            if (isClose == true)
-                await _service.CloseAsync(this);
+            var closeEventArgs = new DrawerClosingEventArgs();
 
+            if (OnClosing != null)//before close
+                await OnClosing.Invoke(closeEventArgs);
+
+            if (closeEventArgs.Rejected)
+                return;
+
+            await _service.CloseAsync(this);
+
+            if (OnClosed != null)//after close
+                await OnClosed.Invoke(result);
+
+            if (TaskCompletionSource != null)//dialog close
+                TaskCompletionSource.SetResult(result);
         }
+
+        internal TaskCompletionSource<TResult> TaskCompletionSource { get; set; }
     }
 }

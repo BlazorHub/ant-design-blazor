@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
 using OneOf;
 
@@ -17,8 +18,9 @@ namespace AntDesign
             get => _dataSource;
             set
             {
-                _total = value.Count();
-                _dataSource = value;
+                _dataSourceCount = value?.Count() ?? 0;
+                _dataSource = value ?? Enumerable.Empty<TItem>();
+                _waitingReload = true;
             }
         }
 
@@ -26,24 +28,30 @@ namespace AntDesign
         public RenderFragment<TItem> ChildContent { get; set; }
 
         [Parameter]
-        public IEnumerable<TItem> SelectedRows { get; set; } = Array.Empty<TItem>();
-
-        [Parameter]
-        public EventCallback<IEnumerable<TItem>> SelectedRowsChanged { get; set; }
+        public EventCallback<QueryModel<TItem>> OnChange { get; set; }
 
         [Parameter]
         public bool Loading { get; set; }
 
-        [Parameter] 
-        public OneOf<string, RenderFragment> Title { get; set; }
-        
-        [Parameter] 
-        public OneOf<string, RenderFragment> Footer { get; set; }
-        
-        [Parameter] 
+        [Parameter]
+        public string Title { get; set; }
+
+        [Parameter]
+        public RenderFragment TitleTemplate { get; set; }
+
+        [Parameter]
+        public string Footer { get; set; }
+
+        [Parameter]
+        public RenderFragment FooterTemplate { get; set; }
+
+        [Parameter]
         public TableSize Size { get; set; }
 
-        [Parameter] 
+        [Parameter]
+        public TableLocale Locale { get; set; } = LocaleProvider.CurrentLocale.Table;
+
+        [Parameter]
         public bool Bordered { get; set; } = false;
 
         [Parameter]
@@ -57,32 +65,78 @@ namespace AntDesign
 
         public ColumnContext ColumnContext { get; set; } = new ColumnContext();
 
+        private IEnumerable<TItem> _showItems;
+
         private IEnumerable<TItem> _dataSource;
-        private ISelectionColumn _headerSelection;
 
-        ISelectionColumn ITable.HeaderSelection
+        private bool _waitingReload = false;
+
+        private bool ServerSide => _total > _dataSourceCount;
+
+        public void ReloadData()
         {
-            get => _headerSelection;
-            set => _headerSelection = value;
-        }
+            PageIndex = 1;
 
-        void ITable.SelectionChanged(int[] checkedIndex)
-        {
-            if (SelectedRowsChanged.HasDelegate)
-            {
-                var list = new List<TItem>();
-                foreach (var index in checkedIndex)
-                {
-                    list.Add(DataSource.ElementAt(index));
-                }
+            FlushCache();
 
-                SelectedRowsChanged.InvokeAsync(list);
-            }
+            this.Reload();
         }
 
         void ITable.Refresh()
         {
             StateHasChanged();
+        }
+
+        void ITable.ReloadAndInvokeChange()
+        {
+            ReloadAndInvokeChange();
+        }
+
+        private void ReloadAndInvokeChange()
+        {
+            var queryModel = this.Reload();
+            if (OnChange.HasDelegate)
+            {
+                OnChange.InvokeAsync(queryModel);
+            }
+        }
+
+        private QueryModel<TItem> Reload()
+        {
+            var queryModel = new QueryModel<TItem>(PageIndex, PageSize);
+
+            foreach (var col in ColumnContext.Columns)
+            {
+                if (col is IFieldColumn fieldColumn && fieldColumn.Sortable)
+                {
+                    queryModel.AddSortModel(fieldColumn.SortModel);
+                }
+            }
+
+            if (ServerSide)
+            {
+                _showItems = _dataSource;
+            }
+            else
+            {
+                if (_dataSource != null)
+                {
+                    var query = _dataSource.AsQueryable();
+                    foreach (var sort in queryModel.SortModel)
+                    {
+                        query = sort.Sort(query);
+                    }
+
+                    query = query.Skip((PageIndex - 1) * PageSize).Take(PageSize);
+                    queryModel.SetQueryableLambda(query);
+
+                    _showItems = query;
+                }
+            }
+
+            StateHasChanged();
+
+            return queryModel;
         }
 
         private void SetClass()
@@ -105,35 +159,27 @@ namespace AntDesign
             base.OnInitialized();
 
             SetClass();
+
+            InitializePagination();
+
+            FlushCache();
+
+            ReloadAndInvokeChange();
         }
 
-        private void ChangeSelection(int[] indexes)
+        protected override void OnAfterRender(bool firstRender)
         {
-            if (indexes == null || !indexes.Any())
-            {
-                this._headerSelection.RowSelections.ForEach(x => x.Check(false));
-                this._headerSelection.Check(false);
-            }
-            else
-            {
-                this._headerSelection.RowSelections.Where(x => !x.RowIndex.IsIn(indexes)).ForEach(x => x.Check(false));
-                this._headerSelection.RowSelections.Where(x => x.RowIndex.IsIn(indexes)).ForEach(x => x.Check(true));
-                this._headerSelection.Check(true);
-            }
-        }
+            base.OnAfterRender(firstRender);
 
-        public void SetSelection(string[] keys)
-        {
-            if (keys == null || !keys.Any())
+            if (_waitingReload)
             {
-                this._headerSelection.RowSelections.ForEach(x => x.Check(false));
-                this._headerSelection.Check(false);
+                _waitingReload = false;
+                Reload();
             }
-            else
+
+            if (!firstRender)
             {
-                this._headerSelection.RowSelections.Where(x => !x.Key.IsIn(keys)).ForEach(x => x.Check(false));
-                this._headerSelection.RowSelections.Where(x => x.Key.IsIn(keys)).ForEach(x => x.Check(true));
-                this._headerSelection.Check(keys.Any());
+                this.FinishLoadPage();
             }
         }
     }

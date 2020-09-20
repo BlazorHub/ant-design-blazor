@@ -2,6 +2,9 @@ export function getDom(element) {
   if (!element) {
     element = document.body;
   } else if (typeof element === 'string') {
+    if (element === 'document') {
+      return document;
+    }
     element = document.querySelector(element);
   }
   return element;
@@ -31,6 +34,22 @@ export function getDomInfo(element) {
   return result;
 }
 
+export function addFileClickEventListener(btn) {
+  if ((btn as HTMLElement).addEventListener) {
+    (btn as HTMLElement).addEventListener("click", fileClickEvent);
+  }
+}
+
+export function removeFileClickEventListener(btn) {
+  (btn as HTMLElement).removeEventListener("click", fileClickEvent);
+}
+
+export function fileClickEvent() {
+  var fileId = this.attributes["data-fileid"].nodeValue;
+  var element = document.getElementById(fileId);
+  (element as HTMLInputElement).click();
+}
+
 export function clearFile(element) {
   element.setAttribute("type", "input");
   element.value = '';
@@ -39,14 +58,18 @@ export function clearFile(element) {
 
 export function getFileInfo(element) {
   if (element.files && element.files.length > 0) {
-    var file = element.files[0];
-    var objectUrl = getObjectURL(element);
-    var fileInfo = {
-      fileName: file.name,
-      size: file.size,
-      objectURL: objectUrl,
-      type: file.type
-    };
+    var fileInfo = [];
+    for (var i = 0; i < element.files.length; i++) {
+      var file = element.files[i];
+      var objectUrl = getObjectURL(element);
+      fileInfo.push({
+        fileName: file.name,
+        size: file.size,
+        objectURL: objectUrl,
+        type: file.type
+      });
+    }
+
     return fileInfo;
   }
 }
@@ -62,16 +85,21 @@ export function getObjectURL(element) {
   return url;
 }
 
-export function uploadFile(element, headers, fileId, url, name, instance, percentMethod, successMethod, errorMethod) {
+export function uploadFile(element, index, data, headers, fileId, url, name, instance, percentMethod, successMethod, errorMethod) {
   let formData = new FormData();
-  var file = element.files[0];
+  var file = element.files[index];
   var size = file.size;
-  formData.append(name, file)
+  formData.append(name, file);
+  if (data != null) {
+    for (var key in data) {
+      formData.append(key, data[key]);
+    }
+  }
   const req = new XMLHttpRequest()
   req.onreadystatechange = function () {
     if (req.readyState === 4) {
-      if (req.responseText == null || req.responseText.length == 0) {
-        instance.invokeMethodAsync(errorMethod, fileId, "error");
+      if (req.status != 200) {
+        instance.invokeMethodAsync(errorMethod, fileId, `{"status": ${req.status}}`);
         return;
       }
       instance.invokeMethodAsync(successMethod, fileId, req.responseText);
@@ -94,7 +122,7 @@ export function uploadFile(element, headers, fileId, url, name, instance, percen
 }
 
 export function triggerEvent(element, eventType, eventName) {
-  var dom = element;
+  var dom = element as HTMLInputElement;
   var evt = document.createEvent(eventType);
   evt.initEvent(eventName);
   return dom.dispatchEvent(evt);
@@ -102,7 +130,10 @@ export function triggerEvent(element, eventType, eventName) {
 
 export function getBoundingClientRect(element) {
   let dom = getDom(element);
-  return dom.getBoundingClientRect();
+  if (dom) {
+    return dom.getBoundingClientRect();
+  }
+  return null;
 }
 
 export function addDomEventListener(element, eventName, invoker) {
@@ -322,46 +353,40 @@ export function removeCls(selector: Element | string, clsName: string | Array<st
   }
 }
 
+const oldBodyCacheStack = [];
+
+const hasScrollbar = () => {
+  let overflow = document.body.style.overflow;
+  if (overflow && overflow === "hidden") return false;
+  return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
+}
+
 export function disableBodyScroll() {
-  css(document.body,
+  let body = document.body;
+  const oldBodyCache = {};
+  ["position", "width", "overflow"].forEach((key) => {
+    oldBodyCache[key] = body.style[key];
+  });
+  oldBodyCacheStack.push(oldBodyCache);
+  css(body,
     {
       "position": "relative",
-      "width": "calc(100% - 17px)",
+      "width": hasScrollbar() ? "calc(100% - 17px)" : null,
       "overflow": "hidden"
     });
   addCls(document.body, "ant-scrolling-effect");
 }
 
-function enableBodyScroll(selector, filter = null) {
-  let length = 0;
-  let queryElements = document.querySelectorAll(selector);
-  if (typeof filter === "function") {
-    queryElements.forEach((value, key, parent) => {
-      if (!filter(value, key, parent)) {
-        length += 1;
-      }
+export function enableBodyScroll() {
+  let oldBodyCache = oldBodyCacheStack.length > 0 ? oldBodyCacheStack.pop() : {};
+
+  css(document.body,
+    {
+      "position": oldBodyCache["position"] ?? null,
+      "width": oldBodyCache["width"] ?? null,
+      "overflow": oldBodyCache["overflow"] ?? null
     });
-  } else {
-    length = queryElements.length;
-  }
-  if (length === 0) {
-    css(document.body,
-      {
-        "position": null,
-        "width": null,
-        "overflow": null
-      });
-    removeCls(document.body, "ant-scrolling-effect");
-  }
-}
-
-export function enableModalBodyScroll() {
-  enableBodyScroll(".ant-modal-mask:not(.ant-modal-mask-hidden)");
-}
-
-export function enableDrawerBodyScroll() {
-  enableBodyScroll(".ant-drawer-open",
-    (value, key, parent) => { return value.style.position === "absolute" });
+  removeCls(document.body, "ant-scrolling-effect");
 }
 
 export function createIconFromfontCN(scriptUrl) {
@@ -382,3 +407,34 @@ export function getInnerText(element) {
   let dom = getDom(element);
   return dom.innerText;
 }
+
+const objReferenceDict = {};
+export function disposeObj(objReferenceName) {
+  delete objReferenceDict[objReferenceName];
+}
+
+//#region mentions
+
+import getOffset from "./modules/Caret";
+
+export function getCursorXY(element, objReference) {
+  objReferenceDict["mentions"] = objReference;
+  window.addEventListener("click", mentionsOnWindowClick);
+
+  var offset = getOffset(element);
+
+  return [offset.left, offset.top + offset.height + 14];
+}
+
+function mentionsOnWindowClick(e) {
+  let mentionsObj = objReferenceDict["mentions"];
+  if (mentionsObj) {
+    mentionsObj.invokeMethodAsync("CloseMentionsDropDown");
+  } else {
+    window.removeEventListener("click", mentionsOnWindowClick);
+  }
+}
+
+//#endregion
+
+export { enableDraggable, disableDraggable, resetModalPosition } from "./modules/dragHelper";

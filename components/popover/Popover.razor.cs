@@ -12,10 +12,16 @@ namespace AntDesign
     public partial class Popover : OverlayTrigger
     {
         [Parameter]
-        public OneOf<string, RenderFragment> Title { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         [Parameter]
-        public OneOf<string, RenderFragment> Content { get; set; } = string.Empty;
+        public RenderFragment TitleTemplate { get; set; }
+
+        [Parameter]
+        public string Content { get; set; } = string.Empty;
+
+        [Parameter]
+        public RenderFragment ContentTemplate { get; set; }
 
         [Parameter]
         public bool ArrowPointAtCenter { get; set; } = false;
@@ -32,17 +38,17 @@ namespace AntDesign
             Placement = PlacementType.Top;
         }
 
-        public override string GetOverlayEnterClass()
+        internal override string GetOverlayEnterClass()
         {
             return "zoom-big-fast-enter zoom-big-fast-enter-active zoom-big-fast";
         }
 
-        public override string GetOverlayLeaveClass()
+        internal override string GetOverlayLeaveClass()
         {
             return "zoom-big-fast-leave zoom-big-fast-leave-active zoom-big-fast";
         }
 
-        public override async Task Show(int? overlayLeft = null, int? overlayTop = null)
+        internal override async Task Show(int? overlayLeft = null, int? overlayTop = null)
         {
             if (Trigger.Contains(TriggerType.Hover))
             {
@@ -52,7 +58,7 @@ namespace AntDesign
             await base.Show(overlayLeft, overlayTop);
         }
 
-        public override async Task Hide(bool force = false)
+        internal override async Task Hide(bool force = false)
         {
             if (Trigger.Contains(TriggerType.Hover))
             {

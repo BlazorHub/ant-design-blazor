@@ -1,0 +1,45 @@
+﻿<div>
+    <Card Bordered Title="Default size card">
+        <Extra>
+            <a>More</a>
+        </Extra>
+        <Body>
+            <p>Card content</p>
+        </Body>
+    </Card>
+    <br />
+    <Card Bordered Size="small" Title="Small size card">
+        <Extra>
+            <a>More</a>
+        </Extra>
+        <Body>
+            <p>Card content</p>
+        </Body>
+    </Card>
+    <br />
+    <Card Bordered>
+        <TitleTemplate>
+            <Icon Type="credit-card" Theme="outline" /> Title is Template
+        </TitleTemplate>
+        <Extra>
+            <a>More</a>
+        </Extra>
+        <Body>
+            <p>Card content</p>
+        </Body>
+    </Card>
+    <br />
+    <Card Bordered Size="small" TitleTemplate="titleTemplate">
+        <Extra>
+            <a>More</a>
+        </Extra>
+        <Body>
+            <p>Card content</p>
+        </Body>
+    </Card>
+</div>
+
+@code{
+    RenderFragment titleTemplate =@<div><Icon Type="credit-card" Theme="outline" /> Title is Template</div>;
+
+}

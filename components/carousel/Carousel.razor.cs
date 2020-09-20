@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AntDesign.JsInterop;
@@ -49,6 +50,26 @@ namespace AntDesign
 
         #endregion Parameters
 
+        [Inject] public DomEventService DomEventService { get; set; }
+
+        public void Next() => GoTo(_slicks.IndexOf(_activeSlick) + 1);
+
+        public void Previous() => GoTo(_slicks.IndexOf(_activeSlick) - 1);
+
+        public void GoTo(int index)
+        {
+            if (index >= _slicks.Count)
+            {
+                index = 0;
+            }
+            else if (index < 0)
+            {
+                index = _slicks.Count - 1;
+            }
+
+            Activate(index);
+        }
+
         private void SetClass()
         {
             SlickSliderClassMapper.Clear()
@@ -81,8 +102,16 @@ namespace AntDesign
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                Resize();
+                DomEventService.AddEventListener("window", "resize", Resize, false);
+            }
+        }
 
-            DomRect listRect = await JsInvokeAsync<DomRect>(JSInteropConstants.getBoundingClientRect, _ref);
+        private async void Resize(JsonElement e = default)
+        {
+            DomRect listRect = await JsInvokeAsync<DomRect>(JSInteropConstants.GetBoundingClientRect, _ref);
             if ((_slickWidth != (int)listRect.width && IsHorizontal)
                 || (_slickHeight != (int)listRect.height && !IsHorizontal)
                 || IsHorizontal && !string.IsNullOrEmpty(_slickListStyle)
@@ -123,6 +152,11 @@ namespace AntDesign
             }
         }
 
+        internal void RemoveSlick(CarouselSlick slick)
+        {
+            _slicks.Remove(slick);
+        }
+
         internal void AddSlick(CarouselSlick slick)
         {
             _slicks.Add(slick);
@@ -151,19 +185,22 @@ namespace AntDesign
                 index = 0;
             }
 
-            CarouselSlick slick = _slicks[index];
-            _slicks.ForEach(s =>
+            if (_slicks.Count > 0)
             {
-                if (s == slick)
+                CarouselSlick slick = _slicks[index];
+                _slicks.ForEach(s =>
                 {
-                    _activeSlick = s;
-                    s.Activate();
-                }
-                else
-                {
-                    s.Deactivate();
-                }
-            });
+                    if (s == slick)
+                    {
+                        _activeSlick = s;
+                        s.Activate();
+                    }
+                    else
+                    {
+                        s.Deactivate();
+                    }
+                });
+            }
 
             return index;
         }
@@ -180,7 +217,7 @@ namespace AntDesign
 
             if (realIndex == 0 && Effect == CarouselEffect.ScrollX)
             {
-                Thread.Sleep((int)Autoplay.TotalMilliseconds / 2);
+                await Task.Delay((int)Autoplay.TotalMilliseconds / 2);
                 if (IsHorizontal)
                 {
                     _trackStyle = $"width: {_totalWidth}px; opacity: 1; transform: translate3d(-{_slickWidth}px, 0px, 0px);";
@@ -192,6 +229,15 @@ namespace AntDesign
             }
 
             await InvokeAsync(() => StateHasChanged());
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            DomEventService.RemoveEventListerner<JsonElement>("window", "resize", Resize);
+
+            _slicks.Clear();
+
+            base.Dispose(disposing);
         }
     }
 }

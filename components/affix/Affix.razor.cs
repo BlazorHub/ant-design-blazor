@@ -98,17 +98,17 @@ namespace AntDesign
             await base.OnFirstAfterRenderAsync();
             _rendered = true;
 
-            DomRect domRect = await JsInvokeAsync<DomRect>(JSInteropConstants.getBoundingClientRect, _childRef);
+            DomRect domRect = await JsInvokeAsync<DomRect>(JSInteropConstants.GetBoundingClientRect, _childRef);
             _hiddenStyle = $"width: {domRect.width}px; height: {domRect.height}px;";
 
             if (_rootListened)
             {
                 await RenderAffixAsync();
             }
-            else
+            else if (!_rootListened && string.IsNullOrEmpty(Target.Id))
             {
-                DomEventService.AddEventListener(RootScollSelector, "scroll", OnScroll);
-                DomEventService.AddEventListener(RootScollSelector, "resize", OnWindowResize);
+                DomEventService.AddEventListener(RootScollSelector, "scroll", OnScroll, false);
+                DomEventService.AddEventListener(RootScollSelector, "resize", OnWindowResize, false);
                 _rootListened = true;
             }
         }
@@ -131,11 +131,11 @@ namespace AntDesign
 
         private async Task RenderAffixAsync()
         {
-            DomRect childRect = await JsInvokeAsync<DomRect>(JSInteropConstants.getBoundingClientRect, _childRef);
+            DomRect childRect = await JsInvokeAsync<DomRect>(JSInteropConstants.GetBoundingClientRect, _childRef);
             _hiddenStyle = $"width: {childRect.width}px; height: {childRect.height}px;";
 
-            DomRect domRect = await JsInvokeAsync<DomRect>(JSInteropConstants.getBoundingClientRect, _ref);
-            DomRect appRect = await JsInvokeAsync<DomRect>(JSInteropConstants.getBoundingClientRect, RootRectSelector);
+            DomRect domRect = await JsInvokeAsync<DomRect>(JSInteropConstants.GetBoundingClientRect, _ref);
+            DomRect appRect = await JsInvokeAsync<DomRect>(JSInteropConstants.GetBoundingClientRect, RootRectSelector);
             // reset appRect.top / bottom, so its position is fixed.
             appRect.top = 0;
             appRect.bottom = appRect.height;
@@ -146,7 +146,7 @@ namespace AntDesign
             }
             else
             {
-                containerRect = await JsInvokeAsync<DomRect>(JSInteropConstants.getBoundingClientRect, Target);
+                containerRect = await JsInvokeAsync<DomRect>(JSInteropConstants.GetBoundingClientRect, Target);
             }
             // become affixed
             if (OffsetBottom.HasValue)
@@ -165,7 +165,7 @@ namespace AntDesign
             }
             else if (OffsetTop.HasValue)
             {
-                if (domRect.top < containerRect.top)
+                if (domRect.top < containerRect.top + OffsetTop.Value)
                 {
                     _affixStyle = _hiddenStyle + $"top: {containerRect.top + OffsetTop}px; position: fixed;";
                     Affixed = true;
@@ -178,6 +178,14 @@ namespace AntDesign
             }
 
             StateHasChanged();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            DomEventService.RemoveEventListerner<JsonElement>(RootScollSelector, "scroll", OnScroll);
+            DomEventService.RemoveEventListerner<JsonElement>(RootScollSelector, "resize", OnWindowResize);
         }
     }
 }

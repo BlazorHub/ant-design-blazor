@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -29,27 +29,60 @@ namespace AntDesign
         private bool _hasDestroy = true;
         private string _wrapStyle = "";
         private bool _disableBodyScroll;
+        private bool _doDragable = false;
+
 
         /// <summary>
         /// dialog root container
         /// </summary>
         private ElementReference _element;
 
+        private ElementReference _dialogHeader;
+
+        private ElementReference _modal;
+
+        private bool _isFirstRender = true;
+
+        #region ant-modal style
+
+        private string _modalStyle = null;
         /// <summary>
         /// ant-modal style
         /// </summary>
         /// <returns></returns>
         private string GetStyle()
         {
-            var style = $"{Config.GetWidth()};";
+            if (_modalStyle == null)
+            {
+                var style = $"{Config.GetWidth()};";
+
+                if (Config.Draggable)
+                {
+                    string left = $"margin: 0; padding-bottom:0;";
+                    style += left;
+                }
+                _modalStyle = style;
+            }
 
             if (!string.IsNullOrWhiteSpace(Style))
             {
-                style += Style + ";";
+                return _modalStyle + Style + ";";
             }
-
-            return style;
+            return _modalStyle;
         }
+
+        /// <summary>
+        /// if Modal is draggable, reset the position style similar with the first show
+        /// </summary>
+        internal async Task TryResetModalStyle()
+        {
+            if (Config.Draggable)
+            {
+                await JsInvokeAsync(JSInteropConstants.ResetModalPosition, _dialogHeader);
+            }
+        }
+
+        #endregion
 
         /// <summary>
         ///  append To body
@@ -57,7 +90,7 @@ namespace AntDesign
         /// <returns></returns>
         private async Task AppendToContainer()
         {
-            await JsInvokeAsync(JSInteropConstants.addElementTo, _element, Config.GetContainer);
+            await JsInvokeAsync(JSInteropConstants.AddElementTo, _element, Config.GetContainer);
         }
 
         #region mask and dialog click event
@@ -100,7 +133,7 @@ namespace AntDesign
         private readonly string _sentinelStart = IdPrefix + Guid.NewGuid().ToString();
         private readonly string _sentinelEnd = IdPrefix + Guid.NewGuid().ToString();
 
-        public string SentinelStart=> _sentinelStart;
+        public string SentinelStart => _sentinelStart;
 
         private async Task OnKeyDown(KeyboardEventArgs e)
         {
@@ -113,17 +146,17 @@ namespace AntDesign
             {
                 if (e.Key == "Tab")
                 {
-                    var activeElement = await JsInvokeAsync<string>(JSInteropConstants.getActiveElement, _sentinelEnd);
+                    var activeElement = await JsInvokeAsync<string>(JSInteropConstants.GetActiveElement, _sentinelEnd);
                     if (e.ShiftKey)
                     {
                         if (activeElement == _sentinelStart)
                         {
-                            await JsInvokeAsync(JSInteropConstants.focus, "#" + _sentinelEnd);
+                            await JsInvokeAsync(JSInteropConstants.Focus, "#" + _sentinelEnd);
                         }
                     }
                     else if (activeElement == _sentinelEnd)
                     {
-                        await JsInvokeAsync(JSInteropConstants.focus, "#" + _sentinelStart);
+                        await JsInvokeAsync(JSInteropConstants.Focus, "#" + _sentinelStart);
                     }
                 }
             }
@@ -151,7 +184,7 @@ namespace AntDesign
 
         #region control show and hide class name and style
 
-        private void Show()
+        private async Task Show()
         {
             if (_hasShow)
             {
@@ -160,12 +193,33 @@ namespace AntDesign
 
             if (Visible)
             {
-                _wrapStyle = "";
+                if (Config.Draggable)
+                {
+                    _wrapStyle = "display:flex;justify-content: center;";
+                    if (Config.Centered)
+                    {
+                        _wrapStyle += "align-items: center;";
+                    }
+                    else
+                    {
+                        _wrapStyle += "align-items: flex-start;";
+                    }
+                }
+                else
+                {
+                    _wrapStyle = "";
+                }
                 _maskHideClsName = "";
                 _maskAnimation = ModalAnimation.MaskEnter;
                 _modalAnimation = ModalAnimation.ModalEnter;
 
+                // wait for animation, "antZoomIn" animation take 0.3s
+                // see: @animation-duration-slow: 0.3s;
+                await Task.Delay(300);
+
                 _hasShow = true;
+
+                StateHasChanged();
             }
 
         }
@@ -194,6 +248,11 @@ namespace AntDesign
 
         }
 
+        public bool IsShow()
+        {
+            return _hasShow;
+        }
+
         #endregion
 
         private string GetMaskClsName()
@@ -219,7 +278,7 @@ namespace AntDesign
             {
                 if (!_hasDestroy)
                 {
-                    Show();
+                    await Show();
                 }
                 else
                 {
@@ -236,6 +295,8 @@ namespace AntDesign
 
         protected override async Task OnAfterRenderAsync(bool isFirst)
         {
+            _isFirstRender = isFirst;
+
             if (Visible)
             {
                 if (_hasDestroy)
@@ -249,7 +310,13 @@ namespace AntDesign
                 if (!_disableBodyScroll)
                 {
                     _disableBodyScroll = true;
-                    await JsInvokeAsync(JSInteropConstants.disableBodyScroll);
+                    await JsInvokeAsync(JSInteropConstants.DisableBodyScroll);
+                }
+
+                if (Config.Draggable && !_doDragable)
+                {
+                    _doDragable = true;
+                    await JsInvokeAsync(JSInteropConstants.EnableDraggable, _dialogHeader, _modal, Config.DragInViewport);
                 }
             }
             else
@@ -258,7 +325,13 @@ namespace AntDesign
                 {
                     _disableBodyScroll = false;
                     await Task.Delay(250);
-                    await JsInvokeAsync(JSInteropConstants.enableModalBodyScroll);
+                    await JsInvokeAsync(JSInteropConstants.EnableBodyScroll);
+                }
+
+                if (Config.Draggable && _doDragable)
+                {
+                    _doDragable = false;
+                    await JsInvokeAsync(JSInteropConstants.DisableDraggable, _dialogHeader);
                 }
             }
             await base.OnAfterRenderAsync(isFirst);

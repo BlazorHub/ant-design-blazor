@@ -79,7 +79,18 @@ namespace AntDesign
             SetClass();
             RadioGroup?.AddRadio(this);
 
+            if (RadioGroup != null && RadioGroup.Disabled)
+            {
+                Disabled = true;
+            }
+
             base.OnInitialized();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            RadioGroup?.RadioItems?.Remove(this);
+            base.Dispose(disposing);
         }
 
         protected override async Task OnFirstAfterRenderAsync()
@@ -104,17 +115,21 @@ namespace AntDesign
 
         internal async Task UnSelect()
         {
-            if (this.IsChecked)
+            if (!Disabled && this.IsChecked)
             {
                 this._checked = false;
                 await CheckedChange.InvokeAsync(false);
                 await CheckedChanged.InvokeAsync(false);
             }
-            await Task.CompletedTask;
         }
 
         public async Task OnClick()
         {
+            if (Disabled)
+            {
+                return;
+            }
+
             if (RadioGroup != null)
             {
                 await RadioGroup.OnRadioChange(this.Value);
@@ -127,12 +142,12 @@ namespace AntDesign
 
         protected async Task Focus()
         {
-            await JsInvokeAsync(JSInteropConstants.focus, this.InputRef);
+            await JsInvokeAsync(JSInteropConstants.Focus, this.InputRef);
         }
 
         protected async Task Blur()
         {
-            await JsInvokeAsync(JSInteropConstants.blur, this.InputRef);
+            await JsInvokeAsync(JSInteropConstants.Blur, this.InputRef);
         }
     }
 }

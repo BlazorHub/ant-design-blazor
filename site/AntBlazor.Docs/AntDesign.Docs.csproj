@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AntDesign.Charts" Version="0.2.0-nightly-200822083000" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\components\AntDesign.csproj" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(SolutionDir)'==''">
@@ -22,14 +19,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\*.yml" />
-    <EmbeddedResource Include="Resources\*.yml" />
+    <None Remove="Resources\*.json" />
+    <EmbeddedResource Include="Resources\*.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\Shared\DemoComponent.cs" Link="Services\DemoComponent.cs" />
     <Compile Include="..\Shared\DemoMenuItem.cs" Link="Services\DemoMenuItem.cs" />
     <Compile Include="..\Shared\DocsFile.cs" Link="Services\DocsFile.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\components\AntDesign.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SolutionDir)node_modules') ">
@@ -48,14 +49,14 @@
 
   <PropertyGroup>
     <CLIProjectDir>site/AntDesign.Docs.Build.CLI</CLIProjectDir>
-    <CLIPath>$(CLIProjectDir)/bin/Debug/netcoreapp3.1/AntDesign.Docs.Build.CLI.dll</CLIPath>
+    <CLIPath>$(CLIProjectDir)/bin/Debug/net5.0/AntDesign.Docs.Build.CLI.dll</CLIPath>
   </PropertyGroup>
 
   <Target Name="RunCli" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug'">
     <Exec WorkingDirectory="$(SolutionDir)" Command="dotnet build $(CLIProjectDir)" />
     <Exec WorkingDirectory="$(SolutionDir)" Command="dotnet $(CLIPath) demo2json $(ProjectDir)Demos $(ProjectDir)wwwroot/meta" />
     <Exec WorkingDirectory="$(SolutionDir)" Command="dotnet $(CLIPath) menu2json $(ProjectDir)Demos docs $(ProjectDir)wwwroot/meta" />
-    <Exec WorkingDirectory="$(SolutionDir)" Command="dotnet $(CLIPath) docs2html ./docs ./AntBlazor.Docs/wwwroot/docs" />
+    <Exec WorkingDirectory="$(SolutionDir)" Command="dotnet $(CLIPath) docs2html ./docs ./site/AntBlazor.Docs/wwwroot/docs" />
   </Target>
 
   <Target Name="PublishRunGulp" AfterTargets="ComputeFilesToPublish">

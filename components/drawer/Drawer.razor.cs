@@ -103,6 +103,7 @@ namespace AntDesign
         }
 
         [Parameter] public EventCallback OnClose { get; set; }
+        [Parameter] public RenderFragment Handler { get; set; }
 
         private OneOf<RenderFragment, string> _content;
 
@@ -238,11 +239,11 @@ namespace AntDesign
 
                     if (string.IsNullOrWhiteSpace(Style))
                     {
-                        _ = JsInvokeAsync(JSInteropConstants.disableBodyScroll);
+                        _ = JsInvokeAsync(JSInteropConstants.DisableBodyScroll);
                     }
                     else if (!_renderInCurrentContainerRegex.IsMatch(Style))
                     {
-                        await JsInvokeAsync(JSInteropConstants.disableBodyScroll);
+                        await JsInvokeAsync(JSInteropConstants.DisableBodyScroll);
                     }
                     StateHasChanged();
                 }
@@ -313,7 +314,7 @@ namespace AntDesign
                 await OnClose.InvokeAsync(this);
                 await Task.Delay(10);
             }
-            await JsInvokeAsync(JSInteropConstants.enableDrawerBodyScroll);
+            await JsInvokeAsync(JSInteropConstants.EnableBodyScroll);
         }
 
         private void CalcAnimation()

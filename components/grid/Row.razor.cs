@@ -63,10 +63,24 @@ namespace AntDesign
                 .If($"{prefixCls}-space-between", () => Justify == "space-between")
                 ;
 
-            await this.SetGutterStyle();
-            DomEventService.AddEventListener<object>("window", "resize", async _ => await this.SetGutterStyle());
-
             await base.OnInitializedAsync();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                DomEventService.AddEventListener<object>("window", "resize", OnResize, false);
+
+                await this.SetGutterStyle();
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        private async void OnResize(object o)
+        {
+            await SetGutterStyle();
         }
 
         private async Task SetGutterStyle()
@@ -75,7 +89,7 @@ namespace AntDesign
 
             await typeof(BreakpointEnum).GetEnumNames().ForEachAsync(async bp =>
             {
-                if (await JsInvokeAsync<bool>(JSInteropConstants.matchMedia, _gridResponsiveMap[bp]))
+                if (await JsInvokeAsync<bool>(JSInteropConstants.MatchMedia, _gridResponsiveMap[bp]))
                 {
                     breakPoint = bp;
                 }
@@ -108,6 +122,13 @@ namespace AntDesign
                 dic => breakPoint != null && dic.ContainsKey(breakPoint) ? (dic[breakPoint], 0) : (0, 0),
                 tuple => tuple
             );
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            DomEventService.RemoveEventListerner<object>("window", "resize", OnResize);
         }
     }
 

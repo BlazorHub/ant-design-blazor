@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using AntDesign.Core.Reflection;
 using AntDesign.Forms;
 using AntDesign.Internal;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using System.Linq;
 
 namespace AntDesign
 {
     public partial class FormItem : AntDomComponentBase, IFormItem
     {
+        private static readonly Dictionary<string, object> _noneColAttributes = new Dictionary<string, object>();
+
         private readonly string _prefixCls = "ant-form-item";
 
         [CascadingParameter(Name = "Form")]
         private IForm Form { get; set; }
+
+        [CascadingParameter(Name = "FormItem")]
+        private IFormItem ParentFormItem { get; set; }
+
+        [CascadingParameter]
+        private EditContext CurrentEditContext { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -28,6 +36,12 @@ namespace AntDesign
         [Parameter]
         public ColLayoutParam WrapperCol { get; set; }
 
+        [Parameter]
+        public bool NoStyle { get; set; } = false;
+
+        [Parameter]
+        public bool Required { get; set; } = false;
+
         private EditContext EditContext => Form?.EditContext;
 
         private bool _isValid = true;
@@ -38,8 +52,7 @@ namespace AntDesign
 
         private RenderFragment _formValidationMessages;
 
-        [CascadingParameter]
-        private EditContext CurrentEditContext { get; set; }
+        private PropertyReflector _propertyReflector;
 
         protected override void OnInitialized()
         {
@@ -70,6 +83,11 @@ namespace AntDesign
 
         private Dictionary<string, object> GetLabelColAttributes()
         {
+            if (NoStyle || ParentFormItem != null)
+            {
+                return _noneColAttributes;
+            }
+
             ColLayoutParam labelColParameter;
 
             if (LabelCol != null)
@@ -90,6 +108,11 @@ namespace AntDesign
 
         private Dictionary<string, object> GetWrapperColAttributes()
         {
+            if (NoStyle || ParentFormItem != null)
+            {
+                return _noneColAttributes;
+            }
+
             ColLayoutParam wrapperColParameter;
 
             if (WrapperCol != null)
@@ -110,6 +133,11 @@ namespace AntDesign
 
         void IFormItem.AddControl<TValue>(AntInputComponentBase<TValue> control)
         {
+            if (control.FieldIdentifier.Model == null)
+            {
+                throw new InvalidOperationException($"Please use @bind-Value in the control with generic type `{typeof(TValue)}`.");
+            }
+
             this._control = control;
 
             CurrentEditContext.OnValidationStateChanged += (s, e) =>
@@ -128,13 +156,11 @@ namespace AntDesign
                 builder.CloseComponent();
             };
 
-            if (control.FieldIdentifier.TryGetValidateProperty(out var propertyInfo))
+            _propertyReflector = PropertyReflector.Create(control.ValueExpression);
+
+            if (_propertyReflector.RequiredAttributes.Any())
             {
-                var requiredAttribute = propertyInfo.GetCustomAttributes(typeof(RequiredAttribute), true);
-                if (requiredAttribute.Length > 0)
-                {
-                    _labelCls = $"{_prefixCls}-required";
-                }
+                _labelCls = $"{_prefixCls}-required";
             }
         }
     }

@@ -1,39 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using OneOf;
 
 namespace AntDesign
 {
-    public partial class CheckboxGroup : AntDomComponentBase
+    public partial class CheckboxGroup : AntInputComponentBase<string[]>
     {
         [Parameter]
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
-        public IList<Checkbox> CheckboxItems { get; set; } = new List<Checkbox>();
+        public OneOf<CheckboxOption[], string[]> Options { get; set; }
 
         [Parameter]
-        public EventCallback<string[]> ValueChanged { get; set; }
+        public EventCallback<string[]> OnChange { get; set; }
 
-        [Parameter]
-#pragma warning disable CA1819 // 属性不应返回数组
-        public CheckboxOption[] Options { get; set; }
+        private string[] _selectedValues;
 
-#pragma warning restore CA1819 // 属性不应返回数组
-
-        [Parameter]
-        public IList<string> Value { get; set; } = Array.Empty<string>();
-
-        protected override void OnParametersSet()
-        {
-            foreach (string item in Value)
-            {
-                Options.Where(o => o.Value == item).ForEach(o => o.Checked = true);
-            }
-        }
+        private IList<Checkbox> _checkboxItems;
 
         [Parameter]
         public bool Disabled { get; set; }
@@ -43,21 +29,62 @@ namespace AntDesign
             ClassMapper.Add("ant-checkbox-group");
         }
 
-        public async void OnOptionChange()
+        internal void AddItem(Checkbox checkbox)
         {
-            await this.ValueChanged.InvokeAsync(this.Options.Where(x => x.Checked).Select(x => x.Value).ToArray());
-            StateHasChanged();
+            this._checkboxItems ??= new List<Checkbox>();
+            this._checkboxItems?.Add(checkbox);
         }
 
-        internal void OnCheckboxChange(Checkbox checkboxBase)
+        internal void RemoveItem(Checkbox checkbox)
         {
-            if (checkboxBase is Checkbox checkbox)
+            this._checkboxItems?.Remove(checkbox);
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Value != null)
             {
-                int index = CheckboxItems.IndexOf(checkbox);
-                if (Options[index] != null)
+                _selectedValues = Value;
+                if (Options.IsT0)
                 {
-                    Options[index].Checked = checkbox.Checked;
+                    Options.AsT0.ForEach(opt => opt.Checked = opt.Value.IsIn(_selectedValues));
                 }
+            }
+
+            _selectedValues ??= Array.Empty<string>();
+        }
+
+        internal void OnCheckboxChange(Checkbox checkbox)
+        {
+            var index = _checkboxItems.IndexOf(checkbox);
+
+            Options.Switch(opts =>
+            {
+                if (opts[index] != null)
+                {
+                    opts[index].Checked = checkbox.Checked;
+                }
+
+                CurrentValue = Options.AsT0.Where(x => x.Checked).Select(x => x.Value).ToArray();
+            }, opts =>
+            {
+                if (checkbox.Checked && !opts[index].IsIn(_selectedValues))
+                {
+                    _selectedValues = _selectedValues.Append(opts[index]);
+                }
+                else
+                {
+                    _selectedValues = _selectedValues.Except(new[] { opts[index] }).ToArray();
+                }
+
+                CurrentValue = _selectedValues;
+            });
+
+            if (OnChange.HasDelegate)
+            {
+                OnChange.InvokeAsync(CurrentValue);
             }
 
             StateHasChanged();

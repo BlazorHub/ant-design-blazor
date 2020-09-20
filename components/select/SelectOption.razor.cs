@@ -9,6 +9,29 @@ namespace AntDesign
 {
     public partial class SelectOption : AntDomComponentBase
     {
+
+        #region Paramters
+        [Parameter] public bool IsTag { get; set; } = false;
+
+        [Parameter] public bool IsSearch { get; set; } = false;
+
+        [Parameter] public string Title { get; set; }
+
+        [Parameter] public string Value { get; set; }
+
+        [Parameter] public string ClassName { get; set; }
+
+        [Parameter] public bool Disabled { get; set; } = false;
+
+        [Parameter] public RenderFragment ChildContent { get; set; }
+
+        [CascadingParameter] public Select SelectParent { get; set; }
+
+        [CascadingParameter] public SelectOptGroup SelectOptGroupParent { get; set; }
+
+        [Parameter] public string Label { get => _label ?? Children; set => _label = value; }
+        #endregion
+
         #region Private
         private string _label = null;
         private bool _isActive = false;
@@ -53,20 +76,39 @@ namespace AntDesign
         #endregion
 
         #region Events
-        protected override void OnInitialized()
+        protected override void Dispose(bool disposing)
+        {
+            SelectParent?.RemoveOption(this);
+            SelectOptGroupParent?.RemoveOption(this);
+            base.Dispose(disposing);
+        }
+
+        protected override async Task OnInitializedAsync()
         {
             SetClassMap();
+
+            if (string.IsNullOrEmpty(Children))
+            {
+                Children = await JsInvokeAsync<string>(JSInteropConstants.GetInnerText, _contentRef);
+            }
+
             SelectParent?.AddOption(this);
             SelectOptGroupParent?.AddOption(this);
-            base.OnParametersSet();
+
+            await base.OnInitializedAsync();
+        }
+
+        protected override void OnInitialized()
+        {
         }
 
         protected async override Task OnFirstAfterRenderAsync()
         {
             if (string.IsNullOrEmpty(Children))
             {
-                Children = await JsInvokeAsync<string>(JSInteropConstants.getInnerText, _contentRef);
-                await InvokeAsync(StateHasChanged);
+                await Task.Delay(1);
+                Children = await JsInvokeAsync<string>(JSInteropConstants.GetInnerText, _contentRef);
+                //await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -74,8 +116,14 @@ namespace AntDesign
         {
             if (!Disabled)
             {
+                await Task.Delay(1);
                 await SelectParent.ToggleOrSetValue(Value);
-                await InvokeAsync(StateHasChanged);
+
+                if (SelectParent.SelectMode == SelectMode.Default)
+                {
+                    await SelectParent.Close();
+                }
+                //await InvokeAsync(StateHasChanged);
             }
         }
 
@@ -83,14 +131,14 @@ namespace AntDesign
         {
             _isActive = true;
             SetClassMap();
-            await InvokeAsync(StateHasChanged);
+            //await InvokeAsync(StateHasChanged);
         }
 
         protected virtual async Task OnSelectOptionMouseLeave()
         {
             _isActive = false;
             SetClassMap();
-            await InvokeAsync(StateHasChanged);
+            //await InvokeAsync(StateHasChanged);
         }
         #endregion Events
 
@@ -112,28 +160,19 @@ namespace AntDesign
         public string Children { get; private set; } = string.Empty;
         #endregion
 
-        #region Paramters
-        [Parameter] public bool IsTag { get; set; } = false;
-
-        [Parameter] public bool IsSearch { get; set; } = false;
-
-        [Parameter] public string Title { get; set; }
-
-        [Parameter] public string Value { get; set; }
-
-        [Parameter] public string ClassName { get; set; }
-
-        [Parameter] public bool Disabled { get; set; } = false;
-
-        [Parameter] public RenderFragment ChildContent { get; set; }
-
-        [CascadingParameter] public Select SelectParent { get; set; }
-
-        [CascadingParameter] public SelectOptGroup SelectOptGroupParent { get; set; }
-
-        [Parameter] public string Label { get => _label ?? Children; set => _label = value; }
         #endregion
         #endregion
-        #endregion
+
+        public override bool Equals(object obj)
+        {
+            SelectOption compareObj = obj as SelectOption;
+
+            if (compareObj == null)
+            {
+                return false;
+            }
+
+            return this.Value == compareObj.Value;
+        }
     }
 }

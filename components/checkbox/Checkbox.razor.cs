@@ -1,36 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using System.Linq.Expressions;
 
 namespace AntDesign
 {
     public partial class Checkbox : AntInputComponentBase<bool>
     {
-        [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        [Parameter] public RenderFragment ChildContent { get; set; }
 
         private ElementReference _inputElement;
         private ElementReference _contentElement;
+        private bool _checked;
+
+        [Parameter] public EventCallback<bool> CheckedChange { get; set; }
+
+        [Parameter] public Expression<Func<bool>> CheckedExpression { get; set; }
+
+        [Parameter] public bool AutoFocus { get; set; }
+
+        [Parameter] public bool Disabled { get; set; }
+
+        [Parameter] public bool Indeterminate { get; set; }
 
         [Parameter]
-        public EventCallback<bool> CheckedChange { get; set; }
-
-        [Parameter]
-        public Expression<Func<bool>> CheckedExpression { get; set; }
-
-        [Parameter]
-        public bool AutoFocus { get; set; }
-
-        [Parameter]
-        public bool Disabled { get; set; }
-
-        [Parameter]
-        public bool Indeterminate { get; set; }
-
-        [Parameter]
-        public bool Checked { get; set; }
+        public bool Checked
+        {
+            get => _checked;
+            set
+            {
+                if (_checked != value)
+                {
+                    _checked = value;
+                    CurrentValue = value;
+                }
+            }
+        }
 
         [Parameter]
         public string Label { get; set; }
@@ -48,12 +54,19 @@ namespace AntDesign
 
         protected override void OnInitialized()
         {
-            if (this is Checkbox checkbox)
-            {
-                CheckboxGroup?.CheckboxItems.Add(checkbox);
-            }
+            CheckboxGroup?.AddItem(this);
 
-            Value = Checked;
+            if (Checked)
+            {
+                Value = Checked;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            CheckboxGroup?.RemoveItem(this);
+
+            base.Dispose(disposing);
         }
 
         protected void SetClass()
@@ -66,13 +79,18 @@ namespace AntDesign
                 .If($"{prefixName}-indeterminate", () => Indeterminate);
         }
 
+        protected override void OnValueChange(bool value)
+        {
+            base.OnValueChange(value);
+            this._checked = value;
+        }
+
         protected async Task InputCheckedChange(ChangeEventArgs args)
         {
             if (args != null && args.Value is bool value)
             {
+                CurrentValue = value;
                 await InnerCheckedChange(value);
-
-                CurrentValue = Checked;
             }
         }
 
@@ -80,9 +98,11 @@ namespace AntDesign
         {
             if (!this.Disabled)
             {
-                this.Checked = @checked;
+                if (this.CheckedChange.HasDelegate)
+                {
+                    await this.CheckedChange.InvokeAsync(@checked);
+                }
 
-                await this.CheckedChange.InvokeAsync(this.Checked);
                 CheckboxGroup?.OnCheckboxChange(this);
             }
         }
@@ -97,11 +117,6 @@ namespace AntDesign
             {
                 InputAttributes.Remove("autofocus");
             }
-        }
-
-        protected void WriteValue(bool value)
-        {
-            this.Checked = value;
         }
     }
 }

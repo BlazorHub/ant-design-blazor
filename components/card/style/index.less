@@ -130,10 +130,13 @@
     padding-bottom: 0;
   }
 
-  &-cover {
+  &-bordered &-cover {
     margin-right: -1px;
     margin-left: -1px;
+    transform: translateY(-1px);
+  }
 
+  &-cover {
     > * {
       display: block;
       width: 100%;

@@ -61,7 +61,10 @@ namespace AntDesign.Docs.Build.CLI.Command
             IList<Dictionary<string, DemoComponent>> componentList = null;
             IList<string> demoTypes = null;
 
-            foreach (FileSystemInfo component in demoDirectoryInfo.GetFileSystemInfos())
+            var directories = demoDirectoryInfo.GetFileSystemInfos()
+                .SelectMany(x => (x as DirectoryInfo).GetFileSystemInfos());
+
+            foreach (FileSystemInfo component in directories)
             {
                 if (!(component is DirectoryInfo componentDirectory)) continue;
 
@@ -82,8 +85,9 @@ namespace AntDesign.Docs.Build.CLI.Command
                         SubTitle = docData.Meta.TryGetValue("subtitle", out string subtitle) ? subtitle : null,
                         Type = docData.Meta["type"],
                         Desc = docData.desc,
-                        ApiDoc = docData.apiDoc,
+                        ApiDoc = docData.apiDoc.Replace("<h2>API</h2>", $"<h2 id=\"API\"><span>API</span><a href=\"{language}/components/{docData.Meta["title"].ToLower()}#API\" class=\"anchor\">#</a></h2>"),
                         Cols = docData.Meta.TryGetValue("cols", out var cols) ? int.Parse(cols) : (int?)null,
+                        Cover = docData.Meta.TryGetValue("cover", out var cover) ? cover : null,
                     });
                 }
 
@@ -99,7 +103,9 @@ namespace AntDesign.Docs.Build.CLI.Command
                     FileSystemInfo razorFile = showCaseFiles.FirstOrDefault(x => x.Extension == ".razor");
                     FileSystemInfo descriptionFile = showCaseFiles.FirstOrDefault(x => x.Extension == ".md");
                     string code = razorFile != null ? File.ReadAllText(razorFile.FullName) : null;
-                    string demoType = $"{demoDirectoryInfo.Name}.{component.Name}.{demoDir.Name}.{razorFile.Name.Replace(razorFile.Extension, "")}";
+
+                    string demoType = $"{demoDirectoryInfo.Name}{razorFile.FullName.Replace(demoDirectoryInfo.FullName, "").Replace("/", ".").Replace("\\", ".").Replace(razorFile.Extension, "")}";
+
                     (DescriptionYaml Meta, string Style, Dictionary<string, string> Descriptions) descriptionContent = descriptionFile != null ? DocParser.ParseDescription(File.ReadAllText(descriptionFile.FullName)) : default;
 
                     demoTypes ??= new List<string>();
@@ -120,6 +126,7 @@ namespace AntDesign.Docs.Build.CLI.Command
                             Name = descriptionFile?.Name.Replace(".md", ""),
                             Style = descriptionContent.Style,
                             Debug = descriptionContent.Meta.Debug,
+                            Docs = descriptionContent.Meta.Docs,
                             Type = demoType
                         });
                     }
@@ -171,7 +178,7 @@ namespace AntDesign.Docs.Build.CLI.Command
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             });
 
-            string demoFilePath = Path.Combine(configFileDirectory, $"demos.json");
+            string demoFilePath = Path.Combine(configFileDirectory, $"demoTypes.json");
             if (File.Exists(demoFilePath))
             {
                 File.Delete(demoFilePath);

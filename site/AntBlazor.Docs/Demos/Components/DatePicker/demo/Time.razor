@@ -1,0 +1,12 @@
+﻿<DatePicker TValue="DateTime?" ShowTime="@true" OnChange="OnChange"/>
+<br />
+<RangePicker TValue="DateTime?[]" ShowTime='@("HH:mm")' OnChange="OnChange"/>
+
+@code
+{
+    private void OnChange(DateTime value, string dateString)
+    {
+        Console.WriteLine($"Selected Time: {value}");
+        Console.WriteLine($"Formatted Selected Time: {dateString}");
+    }
+}
